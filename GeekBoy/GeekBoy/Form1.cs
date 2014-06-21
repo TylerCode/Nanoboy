@@ -30,76 +30,11 @@ namespace GeekBoy
     {
         Rom rom;
         Gameboy gameboy;
-        Thread debugger;
-        bool enableDebugger = false, emulateBios = true;
+        bool emulateBios = true;
 
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-#if DEBUG
-            Console.WriteLine("DEBUG: MainForm launched.");
-#endif
-        }
-
-        private void Debugger()
-        {
-            while (true)
-            {
-                if (enableDebugger)
-                {
-                    string cmd;
-                    string[] tokens;
-                    int address, count;
-                    Console.Write("root@debugger$> ");
-                    cmd = Console.ReadLine(); // read next command
-                    tokens = cmd.Split(' '); // tokenize command
-
-                    if (tokens.Length > 0)
-                    {
-                        switch (tokens[0])
-                        {
-                            case "reg":
-                                Console.WriteLine("AF: 0x{0:X} BC: 0x{1:X} DE: 0x{2:X} HL: 0x{3:X} SP: 0x{4:X} PC: 0x{5:X}",
-                                                   (gameboy.Cpu.A << 8) + gameboy.Cpu.F,
-                                                   (gameboy.Cpu.B << 8) + gameboy.Cpu.C,
-                                                   (gameboy.Cpu.D << 8) + gameboy.Cpu.E,
-                                                   (gameboy.Cpu.H << 8) + gameboy.Cpu.L,
-                                                   gameboy.Cpu.Sp,
-                                                   gameboy.Cpu.Pc);
-                                break;
-                            case "mem":
-                                address = int.Parse(tokens[1].Replace("0x", ""), System.Globalization.NumberStyles.HexNumber);
-                                count = int.Parse(tokens[2].Replace("0x", ""), System.Globalization.NumberStyles.HexNumber);
-                                for (int y = 0; y <= count / 16; y++)
-                                {
-                                    for (int x = 0; x < 16 && y * 16 + x < count; x++)
-                                    {
-                                        Console.Write("{0:X2} ", gameboy.MemoryRouter.ReadByte(address + y * 16 + x));
-                                    }
-                                    Console.WriteLine();
-                                }
-                                break;
-                            case "dis":
-                                address = int.Parse(tokens[1].Replace("0x", ""), System.Globalization.NumberStyles.HexNumber);
-                                count = int.Parse(tokens[2].Replace("0x", ""), System.Globalization.NumberStyles.HexNumber);
-                                foreach (string opcode in gameboy.Disassembler.Disassemble(address, count))
-                                    Console.WriteLine(opcode);
-                                break;
-                            default:
-                                Console.WriteLine("Unrecognized command '{0}'", tokens[0]);
-                                break;
-                        }
-                    }
-                }
-                else
-                {
-                    Thread.Sleep(5000);
-                }
-            }
         }
 
         private Image ResizeImage(Image image, Size size, bool preserveAspectRatio = true)
@@ -137,20 +72,14 @@ namespace GeekBoy
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            try
-            {
+            if (gameboy != null)
                 gameboy.Joypad.HandleInput(e.KeyCode, true);
-            } catch {
-            }
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            try
-            {
+            if (gameboy != null)
                 gameboy.Joypad.HandleInput(e.KeyCode, false);
-            } catch {
-            }
         }
 
         private string ExtractFilename(string path)
@@ -169,22 +98,11 @@ namespace GeekBoy
             openRom.ShowDialog();
             if (File.Exists(openRom.FileName))
             {
-                try
-                {
-                    // Load ROM
-                    rom = new Rom(openRom.FileName);
-                    gameboy = new Gameboy(rom, !emulateBios);
-                    timer1.Start();
-                    gameboy.MainCycle();
-                }
-                catch (Exception ex)
-                {
-#if DEBUG
-                    Console.WriteLine("\nException: {0}", ex.Message);
-#else
-                    MessageBox.Show(string.Format("\nException: {0}", ex.Message), "GeekBoy - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-#endif
-                }
+                // Load ROM
+                rom = new Rom(openRom.FileName);
+                gameboy = new Gameboy(rom, !emulateBios);
+                timer1.Start();
+                gameboy.MainCycle();
             }
         }
 
@@ -193,19 +111,16 @@ namespace GeekBoy
             Environment.Exit(0);
         }
 
-        private void menuDebugger_Click(object sender, EventArgs e)
-        {
-            enableDebugger = !enableDebugger;
-            menuDebugger.Checked = enableDebugger;
-            if (enableDebugger)
-            { debugger = new Thread(Debugger); debugger.Start(); }
-            else debugger.Abort();
-        }
-
         private void menuBIOS_Click(object sender, EventArgs e)
         {
             emulateBios = !emulateBios;
             menuBIOS.Checked = emulateBios;
+        }
+
+        private void menuAbout_Click(object sender, EventArgs e)
+        {
+            frmAbout abt = new frmAbout();
+            abt.ShowDialog();
         }
 
     }

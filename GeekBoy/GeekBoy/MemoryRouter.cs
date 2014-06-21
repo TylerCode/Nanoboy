@@ -30,7 +30,7 @@ namespace GeekBoy
         public IMemoryDevice Mbc { get; set; }
         public Video Video { get; set; }
         public Joypad Joypad { get; set; }
-        public GameboyTimer Timer { get; set; }
+        public Timer Timer { get; set; }
         public Audio Audio { get; set; }
         public int Ie { get; set; }
         public int If { get; set; }
@@ -54,7 +54,7 @@ namespace GeekBoy
                     return _bios[address];
                 return Mbc.ReadByte(address);
             }
-            if (address >= 0x8000 && address <= 0x9FFF) { //The first ">=" is redundant and may be removed safely(applys to whole file as far as I can see)
+            if (address >= 0x8000 && address <= 0x9FFF) {
                 return Video.VRAM[address - 0x8000];
             }
             if (address >= 0xA000 && address <= 0xBFFF) {
@@ -75,7 +75,6 @@ namespace GeekBoy
             }
             if (address >= 0xFF00 && address <= 0xFF7F) { 
                 // IO
-                //Console.WriteLine("READ: " + address.ToString("X"));
                 switch (address - 0xFF00)
                 {
                     case 0x00: // Joypad
@@ -186,7 +185,6 @@ namespace GeekBoy
                 Mbc.WriteByte(address, value);
             } else if (address >= 0x8000 && address <= 0x9FFF) {
                 Video.VRAM[address - 0x8000] = value;
-                //Console.WriteLine("0x{0:X}=0x{1:X}", address, value);
             } else if (address >= 0xA000 && address <= 0xBFFF) {
                 Mbc.WriteByte(address, value);
             } else if (address >= 0xC000 && address <= 0xDFFF) {
@@ -199,7 +197,6 @@ namespace GeekBoy
                 // NOT USABLE 
             } else if (address >= 0xFF00 && address <= 0xFF7F) { 
                 // IO
-                //Console.WriteLine("WRITE: " + address.ToString("X"));
                 switch (address - 0xFF00)
                 {
                     case 0x00: // Joypad

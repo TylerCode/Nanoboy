@@ -29,7 +29,7 @@ namespace GeekBoy
     /// <summary>
 	/// The class "GameboyTimer" emulates the timer of the gameboy.
 	/// </summary>
-    public class GameboyTimer
+    public class Timer
     {
         public int DIV { get; set; }
         public int TIMA { get; set; }

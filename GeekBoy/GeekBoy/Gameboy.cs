@@ -28,32 +28,30 @@ namespace GeekBoy
 	/// </summary>
     public class Gameboy
     {
-        public Cpu Cpu { get; set; }
-        public MemoryRouter MemoryRouter { get; set; }
         public Video Video { get; set; }
         public Audio Audio { get; set; }
-        public Disassembler Disassembler { get; set; }
         public Joypad Joypad { get; set; }
-        private GameboyTimer timer;
+        private Cpu cpu;
+        private MemoryRouter mr;
+        private Timer timer;
         private Thread mc;
 
         public Gameboy(Rom rom, bool useBios = true)
         {
-            MemoryRouter = new MemoryRouter(rom.Memory);
-            Cpu = new Cpu(MemoryRouter);
-            timer = new GameboyTimer();
+            mr = new MemoryRouter(rom.Memory);
+            cpu = new Cpu(mr);
+            timer = new Timer();
             Video = new Video();
             Joypad = new Joypad();
             Audio = new Audio();
-            Disassembler = new Disassembler(MemoryRouter);
 
-            Video.MemoryRouter = MemoryRouter;
-            MemoryRouter.Video = Video;
-            Joypad.MemoryRouter = MemoryRouter;
-            MemoryRouter.Joypad = Joypad;
-            timer.MemoryRouter = MemoryRouter;
-            MemoryRouter.Timer = timer;
-            MemoryRouter.Audio = Audio;
+            Video.MemoryRouter = mr;
+            mr.Video = Video;
+            Joypad.MemoryRouter = mr;
+            mr.Joypad = Joypad;
+            timer.MemoryRouter = mr;
+            mr.Timer = timer;
+            mr.Audio = Audio;
             
             if (!useBios) InitDevice();
         }
@@ -79,7 +77,7 @@ namespace GeekBoy
                     HandleInterrupts();
                     if (cycToGo == 0)
                     {
-                        cycToGo = Cpu.ExecuteOp() - 1;
+                        cycToGo = cpu.ExecuteOp() - 1;
                     } else {
                         cycToGo--;
                     }
@@ -98,40 +96,40 @@ namespace GeekBoy
         private void _debugCore(int pc)
         {
             Console.WriteLine("AF: 0x{0:X} BC: 0x{1:X} DE: 0x{2:X} HL: 0x{3:X} SP: 0x{4:X} PC: 0x{5:X}",
-                               (Cpu.A << 8) + Cpu.F,
-                               (Cpu.B << 8) + Cpu.C,
-                               (Cpu.D << 8) + Cpu.E,
-                               (Cpu.H << 8) + Cpu.L,
-                               Cpu.Sp,
+                               (cpu.A << 8) + cpu.F,
+                               (cpu.B << 8) + cpu.C,
+                               (cpu.D << 8) + cpu.E,
+                               (cpu.H << 8) + cpu.L,
+                               cpu.Sp,
                                pc);
             Console.ReadLine();
         }
 
         private void HandleInterrupts()
         {
-            if (Cpu.Ime || Cpu.WaitForInterrupt)
+            if (cpu.Ime || cpu.WaitForInterrupt)
             {
-                int ifired = MemoryRouter.Ie & MemoryRouter.If;
+                int ifired = mr.Ie & mr.If;
                 if ((ifired & 0x01) == 1)
                 {
-                    MemoryRouter.If &= 0xFE;
-                    Cpu.Interrupt(0x40);
+                    mr.If &= 0xFE;
+                    cpu.Interrupt(0x40);
                     return;
                 } else if ((ifired & 2) == 2) {
-                    MemoryRouter.If &= 0xFD;
-                    Cpu.Interrupt(0x48);
+                    mr.If &= 0xFD;
+                    cpu.Interrupt(0x48);
                     return;
                 } else if ((ifired & 4) == 4) {
-                    MemoryRouter.If &= 0xFB;
-                    Cpu.Interrupt(0x50);
+                    mr.If &= 0xFB;
+                    cpu.Interrupt(0x50);
                     return;
                 } else if ((ifired & 8) == 8) {
-                    MemoryRouter.If &= 0xF7;
-                    Cpu.Interrupt(0x58);
+                    mr.If &= 0xF7;
+                    cpu.Interrupt(0x58);
                     return;
                 } else if ((ifired & 16) == 16) {
-                    MemoryRouter.If &= 0xEF;
-                    Cpu.Interrupt(0x60);
+                    mr.If &= 0xEF;
+                    cpu.Interrupt(0x60);
                     return;
                 }
             }
@@ -164,7 +162,7 @@ namespace GeekBoy
                         Video.ModeClock = 0;
                         Video.LY++;
                         if (Video.LY == Video.LYC && Video.CoincidenceInterrupt)
-                            MemoryRouter.If |= 2;
+                            mr.If |= 2;
                         if (Video.LY == 144)
                         {
                             Video.ModeFlag = 1;
@@ -179,9 +177,9 @@ namespace GeekBoy
                         Video.ModeClock = 0;
                         Video.LY++;
                         if (Video.LY == Video.LYC && Video.CoincidenceInterrupt)
-                            MemoryRouter.If |= 2;
+                            mr.If |= 2;
                         // Request VBlank Interrupt
-                        MemoryRouter.If |= 1;
+                        mr.If |= 1;
 
                         if (Video.LY > 153)
                         {
@@ -195,51 +193,51 @@ namespace GeekBoy
 
         private void InitDevice()
         {
-            Cpu.A = 0x01;
-            Cpu.B = 0x00;
-            Cpu.C = 0x13;
-            Cpu.D = 0x00;
-            Cpu.E = 0xD8;
-            Cpu.H = 0x01;
-            Cpu.L = 0x4D;
-            Cpu.Sp = 0xFFFE;
-            Cpu.Pc = 0x0100;
-            Cpu.FlagZ = true;
-            Cpu.FlagN = false;
-            Cpu.FlagHc = true;
-            Cpu.FlagC = true;
-            Cpu.Memory.WriteByte(0xFF05, 0x00); // TIMA
-            Cpu.Memory.WriteByte(0xFF06, 0x00); // TMA
-            Cpu.Memory.WriteByte(0xFF07, 0x00); // TAC
-            Cpu.Memory.WriteByte(0xFF10, 0x80); // NR10
-            Cpu.Memory.WriteByte(0xFF11, 0xBF); // NR11
-            Cpu.Memory.WriteByte(0xFF12, 0xF3); // NR12
-            Cpu.Memory.WriteByte(0xFF14, 0xBF); // NR14
-            Cpu.Memory.WriteByte(0xFF16, 0x3F); // NR21
-            Cpu.Memory.WriteByte(0xFF17, 0x00); // NR22
-            Cpu.Memory.WriteByte(0xFF19, 0xBF); // NR24
-            Cpu.Memory.WriteByte(0xFF1A, 0x7F); // NR30
-            Cpu.Memory.WriteByte(0xFF1B, 0xFF); // NR31
-            Cpu.Memory.WriteByte(0xFF1C, 0x9F); // NR32
-            Cpu.Memory.WriteByte(0xFF1E, 0xBF); // NR33
-            Cpu.Memory.WriteByte(0xFF20, 0xFF); // NR41
-            Cpu.Memory.WriteByte(0xFF21, 0x00); // NR42
-            Cpu.Memory.WriteByte(0xFF22, 0x00); // NR43
-            Cpu.Memory.WriteByte(0xFF23, 0xBF); // NR30
-            Cpu.Memory.WriteByte(0xFF24, 0x77); // NR50
-            Cpu.Memory.WriteByte(0xFF25, 0xF3); // NR51
-            Cpu.Memory.WriteByte(0xFF26, 0xF1); // NR52
-            Cpu.Memory.WriteByte(0xFF40, 0x91); // LCDC
-            Cpu.Memory.WriteByte(0xFF42, 0x00); // SCY
-            Cpu.Memory.WriteByte(0xFF43, 0x00); // SCX
-            Cpu.Memory.WriteByte(0xFF45, 0x00); // LYC
-            Cpu.Memory.WriteByte(0xFF47, 0xFC); // BGP
-            Cpu.Memory.WriteByte(0xFF48, 0xFF); // OBP0
-            Cpu.Memory.WriteByte(0xFF49, 0xFF); // OBP1
-            Cpu.Memory.WriteByte(0xFF4A, 0x00); // WY
-            Cpu.Memory.WriteByte(0xFF4B, 0x00); // WX
-            Cpu.Memory.WriteByte(0xFFFF, 0x00); // IE
-            MemoryRouter.RomEnable = true;
+            cpu.A = 0x01;
+            cpu.B = 0x00;
+            cpu.C = 0x13;
+            cpu.D = 0x00;
+            cpu.E = 0xD8;
+            cpu.H = 0x01;
+            cpu.L = 0x4D;
+            cpu.Sp = 0xFFFE;
+            cpu.Pc = 0x0100;
+            cpu.FlagZ = true;
+            cpu.FlagN = false;
+            cpu.FlagHc = true;
+            cpu.FlagC = true;
+            cpu.Memory.WriteByte(0xFF05, 0x00); // TIMA
+            cpu.Memory.WriteByte(0xFF06, 0x00); // TMA
+            cpu.Memory.WriteByte(0xFF07, 0x00); // TAC
+            cpu.Memory.WriteByte(0xFF10, 0x80); // NR10
+            cpu.Memory.WriteByte(0xFF11, 0xBF); // NR11
+            cpu.Memory.WriteByte(0xFF12, 0xF3); // NR12
+            cpu.Memory.WriteByte(0xFF14, 0xBF); // NR14
+            cpu.Memory.WriteByte(0xFF16, 0x3F); // NR21
+            cpu.Memory.WriteByte(0xFF17, 0x00); // NR22
+            cpu.Memory.WriteByte(0xFF19, 0xBF); // NR24
+            cpu.Memory.WriteByte(0xFF1A, 0x7F); // NR30
+            cpu.Memory.WriteByte(0xFF1B, 0xFF); // NR31
+            cpu.Memory.WriteByte(0xFF1C, 0x9F); // NR32
+            cpu.Memory.WriteByte(0xFF1E, 0xBF); // NR33
+            cpu.Memory.WriteByte(0xFF20, 0xFF); // NR41
+            cpu.Memory.WriteByte(0xFF21, 0x00); // NR42
+            cpu.Memory.WriteByte(0xFF22, 0x00); // NR43
+            cpu.Memory.WriteByte(0xFF23, 0xBF); // NR30
+            cpu.Memory.WriteByte(0xFF24, 0x77); // NR50
+            cpu.Memory.WriteByte(0xFF25, 0xF3); // NR51
+            cpu.Memory.WriteByte(0xFF26, 0xF1); // NR52
+            cpu.Memory.WriteByte(0xFF40, 0x91); // LCDC
+            cpu.Memory.WriteByte(0xFF42, 0x00); // SCY
+            cpu.Memory.WriteByte(0xFF43, 0x00); // SCX
+            cpu.Memory.WriteByte(0xFF45, 0x00); // LYC
+            cpu.Memory.WriteByte(0xFF47, 0xFC); // BGP
+            cpu.Memory.WriteByte(0xFF48, 0xFF); // OBP0
+            cpu.Memory.WriteByte(0xFF49, 0xFF); // OBP1
+            cpu.Memory.WriteByte(0xFF4A, 0x00); // WY
+            cpu.Memory.WriteByte(0xFF4B, 0x00); // WX
+            cpu.Memory.WriteByte(0xFFFF, 0x00); // IE
+            mr.RomEnable = true;
         }
 
     }

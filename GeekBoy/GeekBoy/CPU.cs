@@ -86,11 +86,6 @@ namespace GeekBoy
         // Memory
         public IMemoryDevice Memory { get; set; }
 
-        // Breakpoints
-        public List<int> CodeBreakpoint { get; set; }
-        public List<int> MemoryBreakpoint { get; set; }
-        public bool BreakpointIssued { get; set; }
-
         // Cycle Handlig
         private bool _actionTaken = false;
         private int[] CycleTableAT = {4, 12, 8, 8, 4, 4, 8, 4, 20, 8, 8, 8, 4, 4, 8, 4,
@@ -1701,8 +1696,6 @@ namespace GeekBoy
                     SET_R8(7, ref _a);
                     };                
             #endregion
-            CodeBreakpoint = new List<int>();
-            MemoryBreakpoint = new List<int>();
         }
 
         public int ExecuteOp()
@@ -1778,8 +1771,6 @@ namespace GeekBoy
 
         private void WriteByte(int address, int value)
         {
-            if (address == 0xFF07)
-                Console.WriteLine(value.ToString("X"));
             Memory.WriteByte(address, (byte)value);
         }
 

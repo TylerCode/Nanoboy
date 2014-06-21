@@ -75,17 +75,10 @@ namespace GeekBoy
         {
             byte[] data = File.ReadAllBytes(path);
             string savePath = path + ".sav";
-#if DEBUG
-            Console.WriteLine("DEBUG: Loading ROM");
-#endif
 
             // Read ROM name
             for (int i = 0; i < 16; i++)
                 Title += (char) data[0x134 + i];
-
-#if DEBUG
-            Console.WriteLine("       ROMNAME={0}", Title);
-#endif
 
             // Game does support CGB features?
             Cgb = data[0x143] == 0x80 || data[0x143] == 0xC0;
@@ -93,31 +86,14 @@ namespace GeekBoy
             // Is the cartridge CGB only?
             CgbOnly = data[0x143] == 0xC0;
 
-#if DEBUG
-            Console.WriteLine("       CGB_SUPPORT={0}", Cgb);
-            Console.WriteLine("       CGB_ONLY={0}", CgbOnly);
-#endif
-
             // Does the game support SGB features?
             SgbSupport = data[0x146] == 0x03;
-
-#if DEBUG
-            Console.WriteLine("       SGB_SUPPORT={0}", SgbSupport);
-#endif
 
             // Cartridge Type
             CartridgeType = (Mbc) data[0x147];
 
-#if DEBUG
-            Console.WriteLine("       MBC={0}", CartridgeType);
-#endif
-
             // ROM size
             RomSize = 32768 << data[0x148];
-
-#if DEBUG
-            Console.WriteLine("       ROMSIZE={0}KB", RomSize/1000);
-#endif
 
             // RAM size
             switch (data[0x149])
@@ -136,20 +112,9 @@ namespace GeekBoy
                     break;
             }
 
-#if DEBUG
-            Console.WriteLine("       RAMSIZE={0}KB", RamSize/1000);
-#endif
-
             Japanese = data[0x14A] == 0x00;
 
-#if DEBUG
-            Console.WriteLine("       JAPANESE={0}", Japanese);
-#endif
-
             // Init MBC
-#if DEBUG
-            Console.WriteLine("DEBUG: Initialize MBC");
-#endif
             switch (CartridgeType)
             {
                 case Mbc.ROM_NONE:

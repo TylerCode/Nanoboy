@@ -45,9 +45,6 @@ namespace GeekBoy
                     _rom[i, j] = fileData[k];
                 }
             }
-#if DEBUG
-            Console.WriteLine("DEBUG: Init OK");
-#endif
         }
 
         public byte ReadByte(int address)
@@ -129,9 +126,6 @@ namespace GeekBoy
                     _rom[i, j] = fileData[k];
                 }
             }
-#if DEBUG
-            Console.WriteLine("DEBUG: Init OK");
-#endif
         }
 
         public byte ReadByte(int address)
@@ -235,9 +229,6 @@ namespace GeekBoy
                     _rom[i, j] = fileData[k];
                 }
             }
-#if DEBUG
-            Console.WriteLine("DEBUG: MCB Init OK");
-#endif
         }
 
         public byte ReadByte(int address)
