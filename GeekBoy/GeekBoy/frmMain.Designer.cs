@@ -19,7 +19,7 @@
 
 namespace GeekBoy
 {
-    partial class Form1
+    partial class frmMain
     {
         /// <summary>
         /// Erforderliche Designervariable.
@@ -48,7 +48,7 @@ namespace GeekBoy
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.menuFile = new System.Windows.Forms.MenuItem();
             this.menuOpen = new System.Windows.Forms.MenuItem();
@@ -65,11 +65,12 @@ namespace GeekBoy
             this.menuItem15 = new System.Windows.Forms.MenuItem();
             this.menuBIOS = new System.Windows.Forms.MenuItem();
             this.menuTools = new System.Windows.Forms.MenuItem();
+            this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.menuAbout = new System.Windows.Forms.MenuItem();
             this.openRom = new System.Windows.Forms.OpenFileDialog();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -174,7 +175,15 @@ namespace GeekBoy
             // menuTools
             // 
             this.menuTools.Index = 2;
+            this.menuTools.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem2});
             this.menuTools.Text = "Tools";
+            // 
+            // menuItem2
+            // 
+            this.menuItem2.Index = 0;
+            this.menuItem2.Text = "Debugger";
+            this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
             // 
             // menuItem1
             // 
@@ -193,11 +202,6 @@ namespace GeekBoy
             // 
             this.openRom.Filter = "Gameboy ROMs (*.gb)|*.gb";
             // 
-            // timer1
-            // 
-            this.timer1.Interval = 16;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // pictureBox1
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -210,16 +214,22 @@ namespace GeekBoy
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // Form1
+            // timer1
+            // 
+            this.timer1.Interval = 60;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(320, 288);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(20)))), ((int)(((byte)(20)))));
+            this.ClientSize = new System.Drawing.Size(318, 286);
             this.Controls.Add(this.pictureBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Menu = this.mainMenu1;
-            this.Name = "Form1";
-            this.Text = "GeekBoy 2.0";
+            this.Name = "frmMain";
+            this.Text = "GeekBoy 2.5";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
@@ -234,7 +244,6 @@ namespace GeekBoy
         private System.Windows.Forms.MenuItem menuFile;
         private System.Windows.Forms.MenuItem menuOpen;
         private System.Windows.Forms.OpenFileDialog openRom;
-        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.MenuItem menuExit;
         private System.Windows.Forms.MenuItem menuTools;
@@ -251,6 +260,8 @@ namespace GeekBoy
         private System.Windows.Forms.MenuItem menuBIOS;
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem menuAbout;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.MenuItem menuItem2;
     }
 }
 

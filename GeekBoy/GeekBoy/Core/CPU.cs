@@ -19,13 +19,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using GeekBoy.Observer;
 
-namespace GeekBoy
+namespace GeekBoy.Core
 {
     /// <summary>
 	/// The class "Cpu" represents the new cpu emulation core with delegates.
 	/// </summary>
-    public class Cpu
+    public class Cpu : Subscribable
     {
         // Registers
         private int _a, _f, _b, _c, _d, _e, _h, _l;
@@ -72,6 +75,9 @@ namespace GeekBoy
             get { return _l; }
             set { _l = value & 0xFF; }
         }
+
+        // Misc
+        public bool Pause { get; set; }
 
         // CPU Flags
         public bool FlagC { get; set; } // Carry
@@ -1701,13 +1707,14 @@ namespace GeekBoy
         public int ExecuteOp()
         {
             byte op = ReadByte(Pc);
+            if (!Pause) NotifyAll(new NotifyData("CPU_EXECUTE", Pc));
 
             cyclPrefixCB = 0;
             flagRegModifiedDirectly = false;
 
-            if (!Running || WaitForInterrupt) return 4;
+            if (!Running || WaitForInterrupt || Pause) return 4;
 
-            _f = (FlagZ ? 0x80 : 0) + (FlagN ? 0x40 : 0) + (FlagHc ? 0x20 : 0) + (FlagC ? 0x10 : 0);
+            _f = (FlagZ ? 0x80 : 0) | (FlagN ? 0x40 : 0) | (FlagHc ? 0x20 : 0) | (FlagC ? 0x10 : 0);
             _actionTaken = false;
 
             Pc &= 0xFFFF;
@@ -1727,6 +1734,7 @@ namespace GeekBoy
             return CycleTable[op] + cyclPrefixCB;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int ExecutePrefixCb()
         {
             int op = ReadByte(Pc);
@@ -1736,12 +1744,14 @@ namespace GeekBoy
         }
 
         // Stack
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void push_internal(int v)
         {
             Sp -= 2;
             WriteShort(Sp, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int pop_internal()
         {
             int v = ReadShort(Sp);
@@ -1759,21 +1769,27 @@ namespace GeekBoy
         }
 
         // Memory Helpers
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte ReadByte(int address)
         {
+            NotifyAll(new NotifyData("CPU_READ", address));
             return Memory.ReadByte(address);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private ushort ReadShort(int address)
         {
             return (ushort)((Memory.ReadByte(address + 1) << 8) + Memory.ReadByte(address));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteByte(int address, int value)
         {
+            NotifyAll(new NotifyData("CPU_WRITE", address));
             Memory.WriteByte(address, (byte)value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteShort(int address, int value)
         {
             WriteByte(address, value & 0xFF);
@@ -1795,18 +1811,21 @@ namespace GeekBoy
 
         #region Interrupts
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Reti()
         {
             Ime = true;
             Pc = pop_internal();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Ei()
         {
             Ime = true;
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Di()
         {
             Ime = false;
@@ -1817,12 +1836,14 @@ namespace GeekBoy
         //OK
         #region Stack
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Push(int rh, int rl)
         {
             push_internal((rh << 8) + rl);
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Pop(ref int rh, ref int rl) //May be realized with out statements
         {
             int v = pop_internal();
@@ -1835,6 +1856,7 @@ namespace GeekBoy
         //OK
         #region Compare
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CP_R8(int ra)
         {
             FlagN = true;
@@ -1844,6 +1866,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CP_PR16(int rah, int ral)
         {
             int v = ReadByte((rah << 8) + ral);
@@ -1854,6 +1877,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CP_D8()
         {
             int v = ReadByte(Pc + 1);
@@ -1868,6 +1892,7 @@ namespace GeekBoy
         //OK
         #region Program control (Jumps, etc.)
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JR_S8()
         {
             int relAddr = ReadByte(Pc + 1);
@@ -1878,6 +1903,7 @@ namespace GeekBoy
             Pc += relAddr + 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JRNZ_S8()
         {
             if (!FlagZ)
@@ -1889,6 +1915,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JRZ_S8()
         {
             if (FlagZ)
@@ -1900,6 +1927,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JRNC_S8()
         {
             if (!FlagC)
@@ -1911,6 +1939,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JRC_S8()
         {
             if (FlagC)
@@ -1922,11 +1951,13 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JP_A16()
         {
             Pc = ReadShort(Pc + 1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JPNZ_A16()
         {
             if (!FlagZ)
@@ -1938,6 +1969,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JPZ_A16()
         {
             if (FlagZ)
@@ -1949,6 +1981,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JPNC_A16()
         {
             if (!FlagC)
@@ -1960,6 +1993,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JPC_A16()
         {
             if (FlagC)
@@ -1971,17 +2005,20 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void JP_R16(int rh, int rl)
         {
             Pc = (rh << 8) + rl;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CALL_A16()
         {
             push_internal(Pc + 3);
             Pc = ReadShort(Pc + 1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CALLNZ_A16()
         {
             if (!FlagZ)
@@ -1993,6 +2030,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CALLZ_A16()
         {
             if (FlagZ)
@@ -2004,6 +2042,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CALLNC_A16()
         {
             if (!FlagC)
@@ -2015,6 +2054,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CALLC_A16()
         {
             if (FlagC)
@@ -2026,17 +2066,20 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Halt()
         {
             WaitForInterrupt = true;
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Ret()
         {
             Pc = pop_internal();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Retnz()
         {
             if (!FlagZ)
@@ -2048,6 +2091,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Retz()
         {
             if (FlagZ)
@@ -2059,6 +2103,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Retnc()
         {
             if (!FlagC)
@@ -2070,6 +2115,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Retc()
         {
             if (FlagC)
@@ -2081,6 +2127,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Rst(int address)
         {
             push_internal(Pc + 1);
@@ -2091,12 +2138,14 @@ namespace GeekBoy
 
         #region LOAD
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_R8_R8(ref int ra, int rb)
         {
             ra = rb;
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_R16_D16(ref int rh, ref int rl)
         {
             rh = ReadByte(Pc + 2);
@@ -2104,60 +2153,70 @@ namespace GeekBoy
             Pc += 3;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_PR16_R8(int rah, int ral, int rb)
         {
             WriteByte((rah << 8) + ral, rb);
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_R8_D8(ref int r)
         {
             r = ReadByte(Pc + 1);
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_A16_R8(int r)
         {
             WriteByte(ReadShort(Pc + 1), r);
             Pc += 3;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_A16_R16(int rh, int rl)
         {
             WriteShort(ReadShort(Pc + 1), (rh << 8) + rl);
             Pc += 3;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_R8_A16(ref int r)
         {
             r = ReadByte(ReadShort(Pc + 1));
             Pc += 3;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_R8_PR16(ref int r, int rbh, int rbl)
         {
             r = ReadByte((rbh << 8) + rbl);
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_PR16_D8(int rah, int ral)
         {
             WriteByte((rah << 8) + ral, ReadByte(Pc + 1));
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_SP_D16()
         {
             Sp = ReadShort(Pc + 1);
             Pc += 3;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_SP_R16(int rh, int rl)
         {
             Sp = (rh << 8) + rl;
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_R16_SP_S8(ref int rh, ref int rl)
         {
             int v = ReadByte(Pc + 1);
@@ -2165,16 +2224,34 @@ namespace GeekBoy
             {
                 v -= 256;
             }
-            rl = (Sp & 0xFF) + v;
+
+            if (v >= 0) // Addition
+            {
+                FlagHc = (Sp & 0xF) + (v & 0xF) > 0xF;
+                FlagC = (Sp & 0xFF) + v > 0xFF;
+                FlagN = false;
+            } else { // Substraction
+                int vp = v * -1;
+                FlagHc = (Sp & 0xF) < (vp & 0xF);
+                FlagC = vp > (Sp & 0xFF);
+                FlagN = true;
+            }
+
+            int result = (Sp + v) & 0xFFFF;
+            rl = result & 0xFF;
+            rh = result >> 8;
+
+            /*rl = (Sp & 0xFF) + v;
             //FlagHc = (Sp & 0xF) + (v & 0xF) > 0xF;
             bool overflow = rl > 0xFF;
             rl &= 0xFF;
             rh = (Sp >> 8) + (overflow ? 1 : 0);
             //FlagC = rh > 0xFF;
-            rh &= 0xFF;
+            rh &= 0xFF;*/
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LDI_PR16_R8(ref int rah, ref int ral, int rb)
         {
             LD_PR16_R8(rah, ral, rb);
@@ -2182,6 +2259,7 @@ namespace GeekBoy
             Pc--;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LDI_R8_PR16(ref int ra, ref int rbh, ref int rbl)
         {
             LD_R8_PR16(ref ra, rbh, rbl);
@@ -2189,6 +2267,7 @@ namespace GeekBoy
             Pc--;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LDD_PR16_R8(ref int rah, ref int ral, int rb)
         {
             LD_PR16_R8(rah, ral, rb);
@@ -2196,6 +2275,7 @@ namespace GeekBoy
             Pc--;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LDD_R8_PR16(ref int ra, ref int rbh, ref int rbl)
         {
             LD_R8_PR16(ref ra, rbh, rbl);
@@ -2203,24 +2283,28 @@ namespace GeekBoy
             Pc--;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_A8_R8(int ra)
         {
             WriteByte(0xFF00 + ReadByte(Pc + 1), ra);
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_R8_A8(ref int ra)
         {
             ra = ReadByte(0xFF00 + ReadByte(Pc + 1));
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_PR8_R8(int ra, int rb)
         {
             WriteByte(0xFF00 + ra, rb);
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LD_R8_PR8(ref int ra, int rb)
         {
             ra = ReadByte(0xFF00 + rb);
@@ -2231,6 +2315,7 @@ namespace GeekBoy
 
         #region MATH
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void INC_R16(ref int rh, ref int rl)
         {
             if (rl == 0xFF)
@@ -2243,6 +2328,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void INC_R8(ref int r)
         {
             FlagN = false;
@@ -2253,6 +2339,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void INC_PR16(int rh, int rl)
         {
             int addr = (rh << 8) + rl;
@@ -2265,6 +2352,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void INC_SP()
         {
             if (Sp == 0xFFFF)
@@ -2276,6 +2364,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DEC_R16(ref int RH, ref int RL)
         {
             if (RL == 0)
@@ -2288,6 +2377,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DEC_R8(ref int R)
         {
             FlagN = true;
@@ -2298,6 +2388,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DEC_PR16(int rh, int rl)
         {
             int addr = (rh << 8) + rl;
@@ -2310,6 +2401,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ADD_R16_R16(ref int rah, ref int ral, int rbh, int rbl)
         {
             FlagN = false;
@@ -2323,6 +2415,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ADD_R8_R8(ref int ra, int rb)
         {
             FlagN = false;
@@ -2334,6 +2427,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ADD_R8_PR16(ref int ra, int rbh, int rbl)
         {
             int v = ReadByte((rbh << 8) + rbl);
@@ -2346,6 +2440,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ADD_R8_D8(ref int ra)
         {
             int v = ReadByte(Pc + 1);
@@ -2358,6 +2453,7 @@ namespace GeekBoy
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ADD_SP_S8()
         {
             int v = ReadByte(Pc + 1);
@@ -2365,15 +2461,16 @@ namespace GeekBoy
             {
                 v -= 256;
             }
-            //FlagZ = false;
-            //FlagN = false;
-            //FlagHc = (Sp & 0xF) + (v & 0xF) > 0xF;
-            //FlagC = (Sp & 0xFF) + v > 0xFF;
+            FlagZ = (Sp + v) == 0;
+            FlagN = v < 0;
+            FlagHc = (Sp & 0xF) + (v & 0xF) > 0xF;
+            FlagC = (Sp & 0xFF) + v > 0xFF;
             Sp += v;
             Sp &= 0xFFFF;
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ADC_R8_R8(ref int ra, int rb)
         {
             int carryBit = FlagC ? 1 : 0;
@@ -2386,6 +2483,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ADC_R8_PR16(ref int ra, int rbh, int rbl)
         {
             int v = ReadByte((rbh << 8) + rbl);
@@ -2399,6 +2497,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ADC_R8_D8(ref int ra)
         {
             int v = ReadByte(Pc + 1);
@@ -2412,6 +2511,7 @@ namespace GeekBoy
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SUB_R8(int ra)
         {
             FlagN = true;
@@ -2423,6 +2523,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SUB_PR16(int rah, int ral)
         {
             int v = ReadByte((rah << 8) + ral);
@@ -2435,6 +2536,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SUB_D8()
         {
             int v = ReadByte(Pc + 1);
@@ -2447,6 +2549,7 @@ namespace GeekBoy
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SBC_R8_R8(ref int ra, int rb)
         {
             int carryBit = FlagC ? 1 : 0;
@@ -2459,6 +2562,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SBC_R8_PR16(ref int ra, int rah, int ral)
         {
             int carryBit = FlagC ? 1 : 0;
@@ -2472,6 +2576,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SBC_R8_D8(ref int ra)
         {
             int carryBit = FlagC ? 1 : 0;
@@ -2489,6 +2594,7 @@ namespace GeekBoy
 
         #region BIT OPERATIONS
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Rlca()
         {
             int highBit = _a >> 7;
@@ -2500,6 +2606,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Rrca()
         {
             int lowBit = _a & 1;
@@ -2511,6 +2618,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Rla()
         {
             int carryBit = FlagC ? 1 : 0;
@@ -2522,6 +2630,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Rra()
         {
             int carryBit = FlagC ? 0x80 : 0x00;
@@ -2533,6 +2642,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Cpl()
         {
             FlagHc = true;
@@ -2541,6 +2651,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AND_R8(int ra)
         {
             _a &= ra;
@@ -2551,6 +2662,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AND_PR16(int rah, int ral)
         {
             _a &= ReadByte((rah << 8) + ral);
@@ -2561,6 +2673,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AND_D8()
         {
             _a &= ReadByte(Pc + 1);
@@ -2571,6 +2684,7 @@ namespace GeekBoy
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void XOR_R8(int ra)
         {
             _a ^= ra;
@@ -2581,6 +2695,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void XOR_PR16(int rah, int ral)
         {
             _a ^= ReadByte((rah << 8) + ral);
@@ -2591,6 +2706,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void XOR_D8()
         {
             _a ^= ReadByte(Pc + 1);
@@ -2601,6 +2717,7 @@ namespace GeekBoy
             Pc += 2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void OR_R8(int ra)
         {
             _a |= ra;
@@ -2611,6 +2728,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void OR_PR16(int rah, int ral)
         {
             _a |= ReadByte((rah << 8) + ral);
@@ -2621,6 +2739,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void OR_D8()
         {
             _a |= ReadByte(Pc + 1);
@@ -2635,6 +2754,7 @@ namespace GeekBoy
 
         #region Flags
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Scf()
         {
             FlagN = false;
@@ -2643,6 +2763,7 @@ namespace GeekBoy
             Pc++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Ccf()
         {
             FlagC = !FlagC;
@@ -2655,6 +2776,7 @@ namespace GeekBoy
 
         #region BCD
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Daa()
         {
             if (!FlagN)
@@ -2683,6 +2805,7 @@ namespace GeekBoy
 
         #region Prefix CB
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RLC_R8(ref int r)
         {
             int highBit = r >> 7;
@@ -2693,6 +2816,7 @@ namespace GeekBoy
             FlagZ = r == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RLC_PR16(int rh, int rl)
         {
             int address = (rh << 8) + rl;
@@ -2706,6 +2830,7 @@ namespace GeekBoy
             WriteByte(address, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RRC_R8(ref int r)
         {
             int lowBit = r & 1;
@@ -2716,6 +2841,7 @@ namespace GeekBoy
             FlagZ = r == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RRC_PR16(int rh, int rl)
         {
             int address = (rh << 8) + rl;
@@ -2729,6 +2855,7 @@ namespace GeekBoy
             WriteByte(address, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RL_R8(ref int r)
         {
             int carryBit = FlagC ? 1 : 0;
@@ -2739,6 +2866,7 @@ namespace GeekBoy
             FlagZ = r == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RL_PR16(int rh, int rl)
         {
             int address = (rh << 8) + rl;
@@ -2752,6 +2880,7 @@ namespace GeekBoy
             WriteByte(address, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RR_R8(ref int r)
         {
             int carryBit = FlagC ? 0x80 : 0x00;
@@ -2762,6 +2891,7 @@ namespace GeekBoy
             FlagZ = r == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RR_PR16(int rh, int rl)
         {
             int address = (rh << 8) + rl;
@@ -2775,6 +2905,7 @@ namespace GeekBoy
             WriteByte(address, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SLA_R8(ref int r)
         {
             FlagN = false;
@@ -2785,6 +2916,7 @@ namespace GeekBoy
             FlagZ = r == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SLA_PR16(int rh, int rl)
         {
             int address = (rh << 8) + rl;
@@ -2798,6 +2930,7 @@ namespace GeekBoy
             WriteByte(address, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SRA_R8(ref int r)
         {
             FlagN = false;
@@ -2807,6 +2940,7 @@ namespace GeekBoy
             FlagZ = r == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SRA_PR16(int rh, int rl)
         {
             int address = (rh << 8) + rl;
@@ -2819,6 +2953,7 @@ namespace GeekBoy
             WriteByte(address, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SRL_R8(ref int r)
         {
             FlagN = false;
@@ -2829,6 +2964,7 @@ namespace GeekBoy
             FlagZ = r == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SRL_PR16(int rh, int rl)
         {
             int address = (rh << 8) + rl;
@@ -2842,6 +2978,7 @@ namespace GeekBoy
             WriteByte(address, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SWAP_R8(ref int r)
         {
             r = ((r << 4) | (r >> 4)) & 0xFF;
@@ -2851,6 +2988,7 @@ namespace GeekBoy
             FlagC = false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SWAP_PR16(int rh, int rl)
         {
             int address = (rh << 8) + rl;
@@ -2863,6 +3001,7 @@ namespace GeekBoy
             WriteByte(address, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void BIT_R8(int n, int r)
         {
             FlagZ = (r & (1 << n)) == 0;
@@ -2870,6 +3009,7 @@ namespace GeekBoy
             FlagHc = true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void BIT_PR16(int n, int rh, int rl)
         {
             FlagZ = (ReadByte((rh << 8) + rl) & (1 << n)) == 0;
@@ -2877,11 +3017,13 @@ namespace GeekBoy
             FlagHc = true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RES_R8(int n, ref int r)
         {
             r = r & (0xFF - (1 << n));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RES_PR16(int n, int rh, int rl)
         {
             int address = (rh << 8) + rl;
@@ -2890,11 +3032,13 @@ namespace GeekBoy
             WriteByte(address, v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SET_R8(int n, ref int r)
         {
             r |= (1 << n);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SET_PR16(int n, int rh, int rl)
         {
             int address = (rh << 8) + rl;

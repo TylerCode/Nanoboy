@@ -24,8 +24,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
-namespace GeekBoy
+namespace GeekBoy.Core
 {
     /// <summary>
 	/// The class "Video" represents the store for the video i/o registers and also the video renderer.
@@ -96,7 +97,7 @@ namespace GeekBoy
             VRAM = new byte[0x2000];
             OAM = new byte[0xA0];
             Colors = new Color[] {
-            	Color.White, 
+            	Color.WhiteSmoke, 
             	Color.FromArgb(102, 102, 102),
             	Color.FromArgb(68, 68, 68),
             	Color.Black
@@ -108,24 +109,30 @@ namespace GeekBoy
         {
             if (LcdEnable)
             {
-                if (BgEnable) RenderBg();
+                if (BgEnable) RenderBg(); 
                 if (WindowEnable) RenderWindow();
                 if (ObjEnable) RenderObj();
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RenderBg() 
         {
-            int SLY = LY + SCY; // Scrolled Y
-            if (SLY >= 256) SLY -= 256;  // Adjust scrolled Y
+            int SLY = (LY + SCY) % 256; // Scrolled Y
+            //if (SLY >= 256) SLY -= 256;  // Adjust scrolled Y
             int ty = SLY % 8; // y-Axis in the tile
             int y = (SLY - ty) / 8; // Current column
             int tmap = BgTileMapSelect ? 0x1C00 : 0x1800; // Tilemap address
             uint[] lbuffer = new uint[256]; // Buffer for tilemap line
-            int overflow = SCX + 160 - 256; // How much do we overflow in the tilemap?
+            int overflow; // = SCX + 160 -256; // How much do we overflow in the tilemap?
             tmap += y * 32; // Render from the current column
 
-            if (overflow < 0) overflow = 0; 
+            if (SCX + 160 > 256)
+            {
+                overflow = SCX + 160 - 256;
+            } else {
+                overflow = 0;
+            }
 
             for (int x = 0; x < 32; x++)
             {
@@ -146,6 +153,7 @@ namespace GeekBoy
             System.Buffer.BlockCopy(lbuffer, 0, _buffer, (LY * 160 + 160 - overflow) * 4, overflow * 4);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RenderWindow() 
         {
             if (LY >= WY) // Have we reached the window starting point, yet?
@@ -181,6 +189,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RenderObj() 
         { 
             OamEntry[] entries = new OamEntry[40];
@@ -250,6 +259,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private uint[] GetTileLine(int addr, int y, int pal, bool transparent = false)
         {
             uint[] tbuffer = new uint[8]; // Tile line  buffer
@@ -266,6 +276,7 @@ namespace GeekBoy
             return tbuffer;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DrawLine(ref uint[] dst, uint[] src, int x, int y, uint maxLen = 0xFFFFFFFF, bool behindBg = false, int pal = 0x0)
         {
             for (int i = 0; i < src.Length & i < maxLen; i++)
@@ -275,6 +286,7 @@ namespace GeekBoy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private uint ColorFromPal(int color, int pal)
         {
             return (uint)Colors[(pal >> (color * 2)) & 3].ToArgb();

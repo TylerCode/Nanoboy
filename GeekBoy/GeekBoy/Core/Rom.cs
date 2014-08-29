@@ -20,7 +20,7 @@
 using System;
 using System.IO;
 
-namespace GeekBoy
+namespace GeekBoy.Core
 {
     public enum Mbc
     {

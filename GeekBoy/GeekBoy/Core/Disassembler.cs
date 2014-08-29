@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GeekBoy
+namespace GeekBoy.Core
 {
 	/// <summary>
 	/// The class "Disassembler" contains a full opcode disassembler for the Gameboy Z80 cpu.

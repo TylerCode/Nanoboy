@@ -17,7 +17,7 @@
  * along with GeekBoy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace GeekBoy
+namespace GeekBoy.Core
 {
     public interface IMemoryDevice
     {

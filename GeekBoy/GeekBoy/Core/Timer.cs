@@ -24,7 +24,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace GeekBoy
+namespace GeekBoy.Core
 {
     /// <summary>
 	/// The class "GameboyTimer" emulates the timer of the gameboy.
@@ -72,7 +72,7 @@ namespace GeekBoy
 
             if (Frequency != 0)
             {
-                if (Clock2 == 1000000 / Frequency)
+                if (Clock2 == 1048576 / Frequency)
                 {
                     TimerTIMA();
                     Clock2 = 0;

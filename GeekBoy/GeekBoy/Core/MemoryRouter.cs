@@ -19,25 +19,28 @@
 
 using System;
 using System.IO;
+using GeekBoy.Observer;
 
-namespace GeekBoy
+namespace GeekBoy.Core
 {
     /// <summary>
 	/// The class "MemoryRouter" emulates the memory managing unit (mmu).
 	/// </summary>
-    public class MemoryRouter : IMemoryDevice
+    public class MemoryRouter : Subscribable, IMemoryDevice
     {
         public IMemoryDevice Mbc { get; set; }
         public Video Video { get; set; }
         public Joypad Joypad { get; set; }
         public Timer Timer { get; set; }
-        public Audio Audio { get; set; }
         public int Ie { get; set; }
         public int If { get; set; }
         public bool RomEnable { get; set; }
-        private byte[]  _wram = new byte[0x2000];
+        public bool CgbEnable { get; set; }
+        private byte[] _wram = new byte[0x2000];
+        private byte[,] _wramCgb = new byte[8, 0x1000];
         private byte[] _hram = new byte[0x7F];
         private byte[] _bios;
+        private byte _wramBank = 1;
 
         public MemoryRouter(IMemoryDevice mbc)
         {
@@ -75,22 +78,27 @@ namespace GeekBoy
             }
             if (address >= 0xFF00 && address <= 0xFF7F) { 
                 // IO
+                NotifyAll(new NotifyData("MEMORY_IO_READ", address));
                 switch (address - 0xFF00)
                 {
                     case 0x00: // Joypad
                         value = Joypad.SelectButtonKeys ? 0x20 : 0x00;
                         value += Joypad.SelectDirectionKeys ? 0x10 : 0x00;
+                        if (!Joypad.SelectButtonKeys)
+                        {
+                            value += Joypad.KeyB ? 0x02 : 0x00;
+                            value += Joypad.KeyA ? 0x01 : 0x00;
+                        } else {
+                            value += Joypad.KeyLeft ? 0x02 : 0x00;
+                            value += Joypad.KeyRight ? 0x01 : 0x00;
+                        }
                         if (!Joypad.SelectDirectionKeys)
                         {
-                            value += Joypad.KeyDown ? 0x00 : 0x08;
-                            value += Joypad.KeyUp ? 0x00 : 0x04;
-                            value += Joypad.KeyLeft ? 0x00 : 0x02;
-                            value += Joypad.KeyRight ? 0x00 : 0x01;
-                        } else if (!Joypad.SelectButtonKeys) {
-                            value += Joypad.KeyStart ? 0x00 : 0x08;
-                            value += Joypad.KeySelect ? 0x00 : 0x04;
-                            value += Joypad.KeyB ? 0x00 : 0x02;
-                            value += Joypad.KeyA ? 0x00 : 0x01;
+                            value += Joypad.KeyDown ? 0x08 : 0x00;
+                            value += Joypad.KeyUp ? 0x04 : 0x00;
+                        } else {
+                            value += Joypad.KeyStart ? 0x08 : 0x00;
+                            value += Joypad.KeySelect ? 0x04 : 0x00;
                         }
                         return (byte)value;
                     case 0x04: // DIV (TIMER)
@@ -116,16 +124,6 @@ namespace GeekBoy
                         return (byte)value;
                     case 0x0F: // Interrupt Flag
                         return (byte)If;
-                    case 0x10: // NR10
-                        return Audio.Channels[0].Sweep;
-                    case 0x11: // NR11
-                        return Audio.Channels[0].SW;
-                    case 0x12: // NR12
-                        return Audio.Channels[0].VolEnv;
-                    case 0x13: // NR13
-                        return Audio.Channels[0].FrLo;
-                    case 0x14: // NR14
-                        return Audio.Channels[0].FrHi;
                     case 0x40: // LCDC
                         value = Video.LcdEnable ? 0x80 : 0x0;
                         value += Video.WindowTileMapSelect ? 0x40 : 0x0;
@@ -164,6 +162,8 @@ namespace GeekBoy
                         return (byte)Video.WX;
                     case 0x50: // ROM ENABLE
                         return RomEnable ? (byte)1 : (byte)0;
+                    case 0x70: // SVBK
+                        return 0;
                     default:
                         return 0;
                 }
@@ -190,13 +190,14 @@ namespace GeekBoy
             } else if (address >= 0xC000 && address <= 0xDFFF) {
                 _wram[address - 0xC000] = value;
             } else if (address >= 0xE000 && address <= 0xFDFF) { 
-                // NOP
+                _wram[address - 0xE000] = value;
             }else if (address >= 0xFE00 && address <= 0xFE9F) {
                 Video.OAM[address - 0xFE00] = value;
             } else if (address >= 0xFEA0 && address <= 0xFEFF) {
                 // NOT USABLE 
             } else if (address >= 0xFF00 && address <= 0xFF7F) { 
                 // IO
+                NotifyAll(new NotifyData("MEMORY_IO_WRITE", address));
                 switch (address - 0xFF00)
                 {
                     case 0x00: // Joypad
@@ -233,42 +234,6 @@ namespace GeekBoy
                     case 0x0F: // Interrupt Flag
                         If = value;
                         break;
-                    case 0x10: // NR10
-						Audio.Channels[0].Sweep = value;
-						Audio.HandleTone(0, 0);
-                        break;
-					case 0x11: // NR11
-						Audio.Channels[0].SW = value;
-						Audio.HandleTone(0, 1);
-                        break;
-					case 0x12: // NR12
-						Audio.Channels[0].VolEnv = value;
-						Audio.HandleTone(0, 2);
-                        break;
-					case 0x13: // NR13
-						Audio.Channels[0].FrLo = value;
-						Audio.HandleTone(0, 3);
-						break;
-					case 0x14: // NR14
-						Audio.Channels[0].FrHi = value;
-						Audio.HandleTone(0, 4);
-						break;
-					case 0x16: // NR21
-						Audio.Channels[1].SW = value;
-						Audio.HandleTone(1, 1);
-                        break;
-					case 0x17: // NR22
-						Audio.Channels[1].VolEnv = value;
-						Audio.HandleTone(1, 2);
-                        break;
-					case 0x18: // NR23
-						Audio.Channels[1].FrLo = value;
-						Audio.HandleTone(1, 3);
-						break;
-					case 0x19: // NR24
-						Audio.Channels[1].FrHi = value;
-						Audio.HandleTone(1, 4);
-						break;
                     case 0x40: // LCDC
                         Video.LcdEnable = ((value >> 7) & 1) == 1;
                         Video.WindowTileMapSelect = ((value >> 6) & 1) == 1;
@@ -318,6 +283,13 @@ namespace GeekBoy
                         break;
                     case 0x50: // ROM ENABLE
                         RomEnable = value > 0;
+                        break;
+                    case 0x70: // SVBK
+                        if (CgbEnable)
+                        {
+                            _wramBank = value;
+                            if (_wramBank == 0) _wramBank++;
+                        }
                         break;
                 }
             } else if (address >= 0xFF80 && address <= 0xFFFE) {

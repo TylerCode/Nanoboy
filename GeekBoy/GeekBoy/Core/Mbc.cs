@@ -20,7 +20,7 @@
 using System;
 using System.IO;
 
-namespace GeekBoy
+namespace GeekBoy.Core
 {
     public class NoMbc : IMemoryDevice
     {
@@ -79,6 +79,11 @@ namespace GeekBoy
             } else {
                 return new byte[0x2000];
             }
+        }
+
+        private void Save()
+        {
+            File.WriteAllBytes(_saveFile, this._ram);
         }
 
         private void WriteSave(int address, byte value)

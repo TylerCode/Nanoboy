@@ -1,5 +1,4 @@
-﻿/*
- * Copyright (C) 2014 Frederic Meyer
+﻿ /* Copyright (C) 2014 Frederic Meyer
  * 
  * This file is part of GeekBoy.
  *
@@ -32,7 +31,7 @@ namespace GeekBoy
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new frmMain());
         }
     }
 }

@@ -24,7 +24,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace GeekBoy
+namespace GeekBoy.Core
 {
     /// <summary>
 	/// The class "Joypad" emulates the joypad.
@@ -43,6 +43,18 @@ namespace GeekBoy
         public bool KeyB { get; set; }
         public bool KeyStart { get; set; }
         public bool KeySelect { get; set; }
+
+        public Joypad()
+        {
+            KeyDown = true;
+            KeyUp = true;
+            KeyLeft = true;
+            KeyRight = true;
+            KeyA = true;
+            KeyB = true;
+            KeyStart = true;
+            KeySelect = true;
+        }
 
         public void HandleInput(Keys k, bool value)
         {

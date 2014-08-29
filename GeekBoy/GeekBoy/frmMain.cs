@@ -23,16 +23,17 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using GeekBoy.Core;
 
 namespace GeekBoy
 {
-    public partial class Form1 : Form
+    public partial class frmMain : Form
     {
         Rom rom;
         Gameboy gameboy;
         bool emulateBios = true;
 
-        public Form1()
+        public frmMain()
         {
             InitializeComponent();
         }
@@ -68,18 +69,19 @@ namespace GeekBoy
         private void timer1_Tick(object sender, EventArgs e)
         {
             pictureBox1.Image = ResizeImage(gameboy.Video.Buffer, new Size(pictureBox1.Width, pictureBox1.Height), false);
+            gameboy.Step();
         }
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (gameboy != null)
-                gameboy.Joypad.HandleInput(e.KeyCode, true);
+                gameboy.Joypad.HandleInput(e.KeyCode, false);
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
             if (gameboy != null)
-                gameboy.Joypad.HandleInput(e.KeyCode, false);
+                gameboy.Joypad.HandleInput(e.KeyCode, true);
         }
 
         private string ExtractFilename(string path)
@@ -102,7 +104,6 @@ namespace GeekBoy
                 rom = new Rom(openRom.FileName);
                 gameboy = new Gameboy(rom, !emulateBios);
                 timer1.Start();
-                gameboy.MainCycle();
             }
         }
 
@@ -121,6 +122,12 @@ namespace GeekBoy
         {
             frmAbout abt = new frmAbout();
             abt.ShowDialog();
+        }
+
+        private void menuItem2_Click(object sender, EventArgs e)
+        {
+            frmDebugger debugger = new frmDebugger(gameboy);
+            debugger.Show();
         }
 
     }
