@@ -70,8 +70,8 @@ namespace GeekBoy.Core
                     }
                     Video.ModeClock++;
                     HandleVideo();
+                    timer.Tick();
                 }
-                timer.Tick();
             }
         }
 

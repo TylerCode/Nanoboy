@@ -81,7 +81,7 @@ namespace GeekBoy
             }
             if (value >= 0xFF00 && value <= 0xFF7F)
             {
-                return "IO";
+                return "IO -> " + _gameboy.Memory.ReadByte(value);
             }
             return string.Empty;
         }

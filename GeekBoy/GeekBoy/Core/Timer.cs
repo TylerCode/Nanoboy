@@ -64,7 +64,7 @@ namespace GeekBoy.Core
             Clock1++;
             Clock2++;
 
-            if (Clock1 == 61)
+            if (Clock1 == 244)
             {
                 TimerDIV();
                 Clock1 = 0;
@@ -72,7 +72,7 @@ namespace GeekBoy.Core
 
             if (Frequency != 0)
             {
-                if (Clock2 == 1048576 / Frequency)
+                if (Clock2 >= 4000000 / Frequency)
                 {
                     TimerTIMA();
                     Clock2 = 0;
