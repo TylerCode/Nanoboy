@@ -1,4 +1,23 @@
-﻿namespace nanoboy
+﻿/*
+ * Copyright (C) 2014 Frederic Meyer
+ * 
+ * This file is part of nanoboy.
+ *
+ * GeekBoy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *   
+ * GeekBoy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with nanoboy.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace nanoboy
 {
     partial class frmNano
     {
@@ -35,10 +54,10 @@
             this.menuOpen = new System.Windows.Forms.MenuItem();
             this.menuClose = new System.Windows.Forms.MenuItem();
             this.menuItem4 = new System.Windows.Forms.MenuItem();
+            this.menuAbout = new System.Windows.Forms.MenuItem();
             this.gameView = new System.Windows.Forms.PictureBox();
             this.openRom = new System.Windows.Forms.OpenFileDialog();
             this.gameRunner = new System.Windows.Forms.Timer(this.components);
-            this.menuAbout = new System.Windows.Forms.MenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.gameView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -74,6 +93,11 @@
             this.menuAbout});
             this.menuItem4.Text = "?";
             // 
+            // menuAbout
+            // 
+            this.menuAbout.Index = 0;
+            this.menuAbout.Text = "About";
+            // 
             // gameView
             // 
             this.gameView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -95,11 +119,6 @@
             // 
             this.gameRunner.Interval = 60;
             this.gameRunner.Tick += new System.EventHandler(this.gameRunner_Tick);
-            // 
-            // menuAbout
-            // 
-            this.menuAbout.Index = 0;
-            this.menuAbout.Text = "About";
             // 
             // frmNano
             // 

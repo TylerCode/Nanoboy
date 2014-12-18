@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2014 Frederic Meyer
  * 
- * This file is part of GeekBoy.
+ * This file is part of nanoboy.
  *
  * GeekBoy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeekBoy.  If not, see <http://www.gnu.org/licenses/>.
+ * along with nanoboy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 using System;
@@ -71,10 +71,9 @@ namespace nanoboy.Core
         public bool SgbSupport = false;
         public string Title = string.Empty;
 
-        public Rom(string path)
+        public Rom(string path, string save_path)
         {
             byte[] data = File.ReadAllBytes(path);
-            string savePath = path + ".sav";
 
             // Read ROM name
             for (int i = 0; i < 16; i++)
@@ -118,20 +117,20 @@ namespace nanoboy.Core
             switch (CartridgeType)
             {
                 case Mbc.ROM_NONE:
-                    Memory = new NoMbc(data, CartridgeType, RomSize, savePath);
+                    Memory = new NoMbc(data, CartridgeType, RomSize, save_path);
                     break;
                 case Mbc.ROM_MBC1_RAM_BATT:
                 case Mbc.ROM_MBC1:
-                    Memory = new Mbc1(data, CartridgeType, RomSize, savePath);
+                    Memory = new Mbc1(data, CartridgeType, RomSize, save_path);
                     break;
                 case Mbc.ROM_MBC3_RAM:
                 case Mbc.ROM_MBC3_RAM_BATT:
                 case Mbc.ROM_MBC3_TIMER_BATT:
                 case Mbc.ROM_MBC3_TIMER_RAM_BATT:
-                    Memory = new Mbc3(data, CartridgeType, RomSize, savePath);
+                    Memory = new Mbc3(data, CartridgeType, RomSize, save_path);
                     break;
                 case Mbc.ROM_MBC5_RAM_BATT:
-                    Memory = new Mbc3(data, CartridgeType, RomSize, savePath);
+                    Memory = new Mbc3(data, CartridgeType, RomSize, save_path);
                     break;
                 default:
                     throw new Exception("Unsupported cartridge type " + CartridgeType);

@@ -66,3 +66,7 @@ packages/
 
 #Test files
 *.testsettings
+
+#NANOBOY SPECIFIC
+*.gb
+*.sav

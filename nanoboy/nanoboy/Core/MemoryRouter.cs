@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2014 Frederic Meyer
  * 
- * This file is part of GeekBoy.
+ * This file is part of nanoboy.
  *
  * GeekBoy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,19 +14,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeekBoy.  If not, see <http://www.gnu.org/licenses/>.
+ * along with nanoboy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 using System;
 using System.IO;
-using nanoboy.Observer;
 
 namespace nanoboy.Core
 {
     /// <summary>
 	/// The class "MemoryRouter" emulates the memory managing unit (mmu).
 	/// </summary>
-    public class MemoryRouter : Subscribable, IMemoryDevice
+    public class MemoryRouter : IMemoryDevice
     {
         public IMemoryDevice Mbc { get; set; }
         public Video Video { get; set; }
@@ -73,7 +72,6 @@ namespace nanoboy.Core
             }
             if (address >= 0xFF00 && address <= 0xFF7F) { 
                 // IO
-                NotifyAll(new NotifyData("MEMORY_IO_READ", address));
                 switch (address - 0xFF00)
                 {
                     case 0x00: // Joypad
@@ -190,7 +188,6 @@ namespace nanoboy.Core
                 // NOT USABLE 
             } else if (address >= 0xFF00 && address <= 0xFF7F) { 
                 // IO
-                NotifyAll(new NotifyData("MEMORY_IO_WRITE", address));
                 switch (address - 0xFF00)
                 {
                     case 0x00: // Joypad

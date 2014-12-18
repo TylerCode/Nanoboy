@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2014 Frederic Meyer
  * 
- * This file is part of GeekBoy.
+ * This file is part of nanoboy.
  *
  * GeekBoy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,21 +14,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GeekBoy.  If not, see <http://www.gnu.org/licenses/>.
+ * along with nanoboy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
-using nanoboy.Observer;
 
 namespace nanoboy.Core
 {
     /// <summary>
 	/// The class "Cpu" represents the new cpu emulation core with delegates.
 	/// </summary>
-    public class Cpu : Subscribable
+    public class Cpu
     {
         // Registers
         private int _a, _f, _b, _c, _d, _e, _h, _l;
@@ -75,9 +74,6 @@ namespace nanoboy.Core
             get { return _l; }
             set { _l = value & 0xFF; }
         }
-
-        // Misc
-        public bool Pause { get; set; }
 
         // CPU Flags
         public bool FlagC { get; set; } // Carry
@@ -1707,12 +1703,11 @@ namespace nanoboy.Core
         public int ExecuteOp()
         {
             byte op = ReadByte(Pc);
-            if (!Pause) NotifyAll(new NotifyData("CPU_EXECUTE", Pc));
 
             cyclPrefixCB = 0;
             flagRegModifiedDirectly = false;
 
-            if (!Running || WaitForInterrupt || Pause) return 4;
+            if (!Running || WaitForInterrupt) return 4;
 
             _f = (FlagZ ? 0x80 : 0) | (FlagN ? 0x40 : 0) | (FlagHc ? 0x20 : 0) | (FlagC ? 0x10 : 0);
             _actionTaken = false;
@@ -1772,7 +1767,6 @@ namespace nanoboy.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte ReadByte(int address)
         {
-            NotifyAll(new NotifyData("CPU_READ", address));
             return Memory.ReadByte(address);
         }
 
@@ -1785,7 +1779,6 @@ namespace nanoboy.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteByte(int address, int value)
         {
-            NotifyAll(new NotifyData("CPU_WRITE", address));
             Memory.WriteByte(address, (byte)value);
         }
 
