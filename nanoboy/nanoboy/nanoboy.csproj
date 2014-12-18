@@ -56,6 +56,12 @@
     <Compile Include="Core\Joypad.cs" />
     <Compile Include="Core\Mbc.cs" />
     <Compile Include="Core\MemoryRouter.cs" />
+    <Compile Include="frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAbout.Designer.cs">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmNano.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -67,6 +73,9 @@
     <Compile Include="Core\Rom.cs" />
     <Compile Include="Core\Timer.cs" />
     <Compile Include="Core\Video.cs" />
+    <EmbeddedResource Include="frmAbout.resx">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmNano.resx">
       <DependentUpon>frmNano.cs</DependentUpon>
     </EmbeddedResource>

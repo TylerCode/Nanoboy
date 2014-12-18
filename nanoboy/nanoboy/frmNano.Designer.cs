@@ -97,6 +97,7 @@ namespace nanoboy
             // 
             this.menuAbout.Index = 0;
             this.menuAbout.Text = "About";
+            this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
             // 
             // gameView
             // 

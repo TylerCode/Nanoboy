@@ -36,6 +36,7 @@ namespace nanoboy
             InitializeComponent();
         }
 
+        #region "Menu"
         private void menuOpen_Click(object sender, EventArgs e)
         {
             if (openRom.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -46,6 +47,13 @@ namespace nanoboy
             }
         }
 
+        private void menuAbout_Click(object sender, EventArgs e)
+        {
+            new frmAbout().ShowDialog();
+        }
+        #endregion
+
+        #region "Update"
         private void gameRunner_Tick(object sender, EventArgs e)
         {
             gameView.Image = this.ResizeImage(gb.GetVideo(), gameView.Size, false);
@@ -79,7 +87,9 @@ namespace nanoboy
             }
             return newImage;
         }
+        #endregion
 
+        #region Joypad
         private void frmNano_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (gb != null)
@@ -91,6 +101,7 @@ namespace nanoboy
             if (this.gb != null)
                 gb.ClearKey(e.KeyCode);
         }
+        #endregion
 
     }
 }
