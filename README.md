@@ -1,4 +1,4 @@
-geekboy
+nanoboy
 =======
 
-A C# GameBoy Emulator (in progress)
+A C# gameboy emulator, based on my previous emulator at https://github.com/hackiosa/geekboy
