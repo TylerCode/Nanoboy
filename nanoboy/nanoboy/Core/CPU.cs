@@ -34,7 +34,7 @@ namespace nanoboy.Core
         public int Sp { get; set; }
         public int Pc { get; set; }
 
-        public int A //Maybe use byte instead of int (you wouldn't need the and operation and could use a short property)
+        public int A //Maybe use byte instead of int (you wouldnt need the and operation and could use a short property)
         {
             get { return _a; }
             set { _a = value & 0xFF; }
