@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="richTextBox1.Text" xml:space="preserve">
+  <data name="textBox1.Text" xml:space="preserve">
     <value>Nanoboy Version: 0.9
 
 Nanoboy is opensource Gameboy emulation.
@@ -125,8 +125,9 @@ Nanoboy is opensource Gameboy emulation.
 Author: Frederic Raphael Meyer (nanoemu)
 Programmed in: C#, .net 4.5
 GIT: https://github.com/nanoemu/nanoboy/
+License: GPLv2
 
-“Software is like sex: it's better when it's free.”
-- Linus Torvalds</value>
+Icon by Kairyon, provided under the creative commons license.
+</value>
   </data>
 </root>

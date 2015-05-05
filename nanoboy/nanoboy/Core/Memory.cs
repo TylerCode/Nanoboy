@@ -23,7 +23,7 @@ using nanoboy.Core.Audio.Backend.NAudio;
 
 namespace nanoboy.Core
 {
-    public sealed class Memory : IMemoryDevice
+    public sealed class Memory : IMemoryDevice, IDisposable
     {
         public Interrupt Interrupt { get; set; }
         public Video Video { get; set; }
@@ -40,6 +40,7 @@ namespace nanoboy.Core
         public QuadChannel channel2;
         public WaveChannel channel3;
         private AudioPlayer audio;
+        private ISerialDevice serial;
 
         public Memory(CPU cpu, ROM rom)
         {
@@ -58,6 +59,7 @@ namespace nanoboy.Core
             audio.Channels.Add(channel2);
             audio.Channels.Add(channel3);
             audio.Start();
+            serial = new SerialConsole();
             Interrupt = new Interrupt(cpu);
             Video = new Video(Interrupt, hdma, rom);
             Joypad = new Joypad(Interrupt);
@@ -107,6 +109,8 @@ namespace nanoboy.Core
                             value += Joypad.KeySelect ? 0x04 : 0x00;
                         }
                         return (byte)value;
+                    case 0x01: // SB Serial transfer data
+                        return serial.Read();
                     case 0x04: // Divider Register
                         return (byte)Timer.DIV;
                     case 0x05: // Timer Counter
@@ -277,6 +281,14 @@ namespace nanoboy.Core
                         Joypad.SelectButtonKeys = ((value >> 5) & 1) == 0;
                         Joypad.SelectDirectionKeys = ((value >> 4) & 1) == 0;
                         break;
+                    case 0x01: // SB Serial transfer data
+                        serial.Write(value);
+                        break;
+                    case 0x02: // SC Serial Transfer Control
+                        if ((value & 0x80) == 0x80) {
+                            serial.Start();
+                        }
+                        break;
                     case 0x04: // Divider Register
                         Timer.DIV = 0;
                         break;
@@ -342,7 +354,7 @@ namespace nanoboy.Core
                         channel3.SoundLengthData = value;
                         break;
                     case 0x1c: // NR32 Channel 3 Select output level
-                        channel3.OutputLevel = value >> 5;
+                        channel3.OutputLevel = (value >> 5) & 3;
                         break;
                     case 0x1D: // NR33 Channel 3 Frequency lo
                         channel3.Frequency = (channel3.Frequency & 0x700) | value;
@@ -480,6 +492,11 @@ namespace nanoboy.Core
             } else {
                 Interrupt.IE = value;
             }
+        }
+
+        public void Dispose()
+        {
+            audio.Dispose();
         }
     }
 }

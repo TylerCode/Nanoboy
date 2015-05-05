@@ -46,6 +46,7 @@ namespace nanoboy
         {
             if (gamethread != null) {
                 gamethread.Abort();
+                nano.Dispose();
             }
             if (openRom.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{606FFA4F-891C-49A0-A100-D9B7D2852538}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>nanoboy</RootNamespace>
     <AssemblyName>nanoboy</AssemblyName>
@@ -75,6 +75,7 @@
     <Compile Include="Core\HDMA.cs" />
     <Compile Include="Core\IMemoryDevice.cs" />
     <Compile Include="Core\Interrupt.cs" />
+    <Compile Include="Core\ISerialDevice.cs" />
     <Compile Include="Core\Joypad.cs" />
     <Compile Include="Core\MBC.cs" />
     <Compile Include="Core\Nanoboy.cs" />
@@ -127,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="nanoboy.ico" />
+    <None Include="Resources\128x128.png" />
     <None Include="Resources\close.png" />
   </ItemGroup>
   <ItemGroup />
