@@ -1,14 +1,14 @@
 ﻿/*
- * Copyright (C) 2014 Frederic Meyer
+ * Copyright (C) 2014 - 2015 Frederic Meyer
  * 
  * This file is part of nanoboy.
  *
- * GeekBoy is free software: you can redistribute it and/or modify
+ * nanoboy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *   
- * GeekBoy is distributed in the hope that it will be useful,
+ * nanoboy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -554,6 +554,7 @@ namespace nanoboy.Core
 			
 			for (int i = 0; i < count; i++)
 			{
+                int pc = ptr;
 				byte opcode = this._memory.ReadByte(ptr);
                 string prototype;
 
@@ -596,11 +597,30 @@ namespace nanoboy.Core
                     ptr++;
                 }
 
-                opcodes.Add(prototype);
+                opcodes.Add(string.Format("{0:X4} {1}", pc, prototype));
 			}
 			
 			return opcodes.ToArray();
 		}
+
+        public int GetLength(int address)
+        {
+            int length = 0;
+            byte opcode = this._memory.ReadByte(address);
+            string prototype;
+            if (opcode == 0xCB)
+            {
+                prototype = this._prototypes_cb[this._memory.ReadByte(address + 1)];
+            } else {
+                prototype = this._prototypes[opcode];
+            }
+            if (prototype.Contains("d8")) length++;
+            if (prototype.Contains("d16")) length += 2;
+            if (prototype.Contains("a8")) length++;
+            if (prototype.Contains("a16")) length += 2;
+            if (prototype.Contains("r8")) length++;
+            return length;
+        }
 		
 	}
 }

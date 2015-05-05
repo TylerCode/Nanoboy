@@ -1,14 +1,14 @@
 ﻿/*
- * Copyright (C) 2014 Frederic Meyer
+ * Copyright (C) 2014 - 2015 Frederic Meyer
  * 
  * This file is part of nanoboy.
  *
- * GeekBoy is free software: you can redistribute it and/or modify
+ * nanoboy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *   
- * GeekBoy is distributed in the hope that it will be useful,
+ * nanoboy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -56,81 +56,63 @@ namespace nanoboy.Core
     }
 
     /// <summary>
-	/// The class "Rom" loads a ROM and creates an instance of the corresponding memory bank controller.
+	/// The class "ROM" loads a ROM and creates an instance of the corresponding memory bank controller.
 	/// </summary>
-    public class Rom
+    public class ROM
     {
-        public Mbc CartridgeType = Mbc.ROM_NONE;
-        public bool Cgb = false;
-        public bool CgbOnly = false;
-        public bool Japanese = false;
+        public Mbc CartridgeType { get; set; }
+        public IMemoryDevice MBC { get; set; }
+        public int RAMSize { get; set; }
+        public int ROMSize { get; set; }
+        public bool HasColorFeatures { get; set; }
+        public bool HasSGBFeatures { get; set; }
+        public string Title { get; set; }
+        public bool Japanese { get; set; }
 
-        public IMemoryDevice Memory;
-        public int RamSize = 0;
-        public int RomSize = 0;
-        public bool SgbSupport = false;
-        public string Title = string.Empty;
-
-        public Rom(string path, string save_path)
+        public ROM(string path, string save_path)
         {
             byte[] data = File.ReadAllBytes(path);
-
-            // Read ROM name
-            for (int i = 0; i < 16; i++)
-                Title += (char) data[0x134 + i];
-
-            // Game does support CGB features?
-            Cgb = data[0x143] == 0x80 || data[0x143] == 0xC0;
-
-            // Is the cartridge CGB only?
-            CgbOnly = data[0x143] == 0xC0;
-
-            // Does the game support SGB features?
-            SgbSupport = data[0x146] == 0x03;
-
-            // Cartridge Type
+            Title = string.Empty;
+            for (int i = 0; i < 16; i++) {
+                Title += (char)data[0x134 + i];
+            }
+            HasColorFeatures = data[0x143] == 0x80 || data[0x143] == 0xC0;
+            HasSGBFeatures = data[0x146] == 0x03;
             CartridgeType = (Mbc) data[0x147];
-
-            // ROM size
-            RomSize = 32768 << data[0x148];
-
-            // RAM size
+            ROMSize = 32768 << data[0x148];
             switch (data[0x149])
             {
                 case 0x0:
-                    RamSize = 0;
+                    RAMSize = 0;
                     break;
                 case 0x1:
-                    RamSize = 2048;
+                    RAMSize = 2048;
                     break;
                 case 0x2:
-                    RamSize = 8192;
+                    RAMSize = 8192;
                     break;
                 case 0x03:
-                    RamSize = 32768;
+                    RAMSize = 32768;
                     break;
             }
-
             Japanese = data[0x14A] == 0x00;
-
-            // Init MBC
             switch (CartridgeType)
             {
                 case Mbc.ROM_NONE:
-                    Memory = new NoMbc(data, CartridgeType, RomSize, save_path);
+                    MBC = new NoMBC(data, CartridgeType, ROMSize);
                     break;
                 case Mbc.ROM_MBC1_RAM_BATT:
                 case Mbc.ROM_MBC1:
-                    Memory = new Mbc1(data, CartridgeType, RomSize, save_path);
+                    MBC = new Mbc1(data, CartridgeType, ROMSize, save_path);
                     break;
                 case Mbc.ROM_MBC3_RAM:
                 case Mbc.ROM_MBC3_RAM_BATT:
                 case Mbc.ROM_MBC3_TIMER_BATT:
                 case Mbc.ROM_MBC3_TIMER_RAM_BATT:
-                    Memory = new Mbc3(data, CartridgeType, RomSize, save_path);
+                    MBC = new Mbc3(data, CartridgeType, ROMSize, save_path);
                     break;
                 case Mbc.ROM_MBC5_RAM_BATT:
-                    Memory = new Mbc3(data, CartridgeType, RomSize, save_path);
+                    MBC = new Mbc3(data, CartridgeType, ROMSize, save_path);
                     break;
                 default:
                     throw new Exception("Unsupported cartridge type " + CartridgeType);

@@ -1,14 +1,14 @@
 ﻿/*
- * Copyright (C) 2014 Frederic Meyer
+ * Copyright (C) 2014 - 2015 Frederic Meyer
  * 
  * This file is part of nanoboy.
  *
- * GeekBoy is free software: you can redistribute it and/or modify
+ * nanoboy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *   
- * GeekBoy is distributed in the hope that it will be useful,
+ * nanoboy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -22,12 +22,10 @@ using System.Windows.Forms;
 namespace nanoboy.Core
 {
     /// <summary>
-	/// The class "Joypad" emulates the joypad.
-	/// </summary>
+    /// The class "Joypad" emulates the joypad.
+    /// </summary>
     public class Joypad
     {
-        public MemoryRouter MemoryRouter;
-
         public bool SelectButtonKeys { get; set; }
         public bool SelectDirectionKeys { get; set; }
         public bool KeyDown { get; set; }
@@ -38,9 +36,11 @@ namespace nanoboy.Core
         public bool KeyB { get; set; }
         public bool KeyStart { get; set; }
         public bool KeySelect { get; set; }
+        private Interrupt interrupt;
 
-        public Joypad()
+        public Joypad(Interrupt interrupt)
         {
+            this.interrupt = interrupt;
             KeyDown = true;
             KeyUp = true;
             KeyLeft = true;
@@ -51,37 +51,38 @@ namespace nanoboy.Core
             KeySelect = true;
         }
 
-        public void HandleInput(Keys k, bool value)
+        public void Set(Keys key, bool status)
         {
-            switch (k)
+            switch (key) 
             {
                 case Keys.Shift:
-                    KeySelect = value;
+                    KeySelect = status;
                     break;
                 case Keys.Enter:
-                    KeyStart = value;
+                    KeyStart = status;
                     break;
                 case Keys.Up:
-                    KeyUp = value;
+                    KeyUp = status;
                     break;
                 case Keys.Down:
-                    KeyDown = value;
+                    KeyDown = status;
                     break;
                 case Keys.Left:
-                    KeyLeft = value;
+                    KeyLeft = status;
                     break;
                 case Keys.Right:
-                    KeyRight = value;
+                    KeyRight = status;
                     break;
                 case Keys.X:
-                    KeyB = value;
+                    KeyB = status;
                     break;
                 case Keys.Y:
-                    KeyA = value;
+                    KeyA = status;
                     break;
             }
-            if (value)
-                MemoryRouter.If |= 16;
+            if (status) {
+                interrupt.IF |= 16;
+            }
         }
 
     }
