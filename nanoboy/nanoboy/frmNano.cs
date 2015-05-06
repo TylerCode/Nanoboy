@@ -70,6 +70,11 @@ namespace nanoboy
             }
         }
 
+        private void menuClose_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
         private void menuAbout_Click(object sender, EventArgs e)
         {
             new frmAbout().ShowDialog();
@@ -124,7 +129,9 @@ namespace nanoboy
 
         private void frmNano_FormClosing(object sender, FormClosingEventArgs e)
         {
-            gamethread.Abort();
+            if (gamethread != null) {
+                gamethread.Abort();
+            }
         }
 
     }

@@ -57,6 +57,23 @@ namespace nanoboy
             this.menuAbout = new System.Windows.Forms.MenuItem();
             this.gameView = new System.Windows.Forms.PictureBox();
             this.openRom = new System.Windows.Forms.OpenFileDialog();
+            this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.menuItem3 = new System.Windows.Forms.MenuItem();
+            this.menuItem5 = new System.Windows.Forms.MenuItem();
+            this.menuItem6 = new System.Windows.Forms.MenuItem();
+            this.menuItem7 = new System.Windows.Forms.MenuItem();
+            this.menuItem8 = new System.Windows.Forms.MenuItem();
+            this.menuItem9 = new System.Windows.Forms.MenuItem();
+            this.menuItem10 = new System.Windows.Forms.MenuItem();
+            this.menuItem11 = new System.Windows.Forms.MenuItem();
+            this.menuItem12 = new System.Windows.Forms.MenuItem();
+            this.menuItem13 = new System.Windows.Forms.MenuItem();
+            this.menuItem14 = new System.Windows.Forms.MenuItem();
+            this.menuItem15 = new System.Windows.Forms.MenuItem();
+            this.menuItem16 = new System.Windows.Forms.MenuItem();
+            this.menuItem17 = new System.Windows.Forms.MenuItem();
+            this.menuItem18 = new System.Windows.Forms.MenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.gameView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,6 +81,7 @@ namespace nanoboy
             // 
             this.nanoMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuFile,
+            this.menuItem1,
             this.menuItem4});
             // 
             // menuFile
@@ -71,6 +89,7 @@ namespace nanoboy
             this.menuFile.Index = 0;
             this.menuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuOpen,
+            this.menuItem12,
             this.menuClose});
             this.menuFile.Text = "File";
             // 
@@ -82,12 +101,13 @@ namespace nanoboy
             // 
             // menuClose
             // 
-            this.menuClose.Index = 1;
+            this.menuClose.Index = 2;
             this.menuClose.Text = "Close";
+            this.menuClose.Click += new System.EventHandler(this.menuClose_Click);
             // 
             // menuItem4
             // 
-            this.menuItem4.Index = 1;
+            this.menuItem4.Index = 2;
             this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuAbout});
             this.menuItem4.Text = "?";
@@ -112,8 +132,112 @@ namespace nanoboy
             // 
             // openRom
             // 
-            this.openRom.Filter = "Gameboy ROMs (*.gb)|*.gb";
+            this.openRom.Filter = "Gameboy ROMs (*.gb, *.gbc)|*.gb;*.gbc";
             this.openRom.InitialDirectory = "./ROMS";
+            // 
+            // menuItem1
+            // 
+            this.menuItem1.Index = 1;
+            this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem2,
+            this.menuItem3,
+            this.menuItem5});
+            this.menuItem1.Text = "Options";
+            // 
+            // menuItem2
+            // 
+            this.menuItem2.Index = 0;
+            this.menuItem2.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem6,
+            this.menuItem7,
+            this.menuItem8,
+            this.menuItem9,
+            this.menuItem10,
+            this.menuItem11});
+            this.menuItem2.Text = "Audio";
+            // 
+            // menuItem3
+            // 
+            this.menuItem3.Index = 1;
+            this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem13});
+            this.menuItem3.Text = "Video";
+            // 
+            // menuItem5
+            // 
+            this.menuItem5.Index = 2;
+            this.menuItem5.Text = "Controls";
+            // 
+            // menuItem6
+            // 
+            this.menuItem6.Index = 0;
+            this.menuItem6.Text = "On";
+            // 
+            // menuItem7
+            // 
+            this.menuItem7.Index = 1;
+            this.menuItem7.Text = "-";
+            // 
+            // menuItem8
+            // 
+            this.menuItem8.Index = 2;
+            this.menuItem8.Text = "Channel 1";
+            // 
+            // menuItem9
+            // 
+            this.menuItem9.Index = 3;
+            this.menuItem9.Text = "Channel 2";
+            // 
+            // menuItem10
+            // 
+            this.menuItem10.Index = 4;
+            this.menuItem10.Text = "Channel 3";
+            // 
+            // menuItem11
+            // 
+            this.menuItem11.Index = 5;
+            this.menuItem11.Text = "Channel 4";
+            // 
+            // menuItem12
+            // 
+            this.menuItem12.Index = 1;
+            this.menuItem12.Text = "-";
+            // 
+            // menuItem13
+            // 
+            this.menuItem13.Index = 0;
+            this.menuItem13.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem14,
+            this.menuItem15,
+            this.menuItem16,
+            this.menuItem17,
+            this.menuItem18});
+            this.menuItem13.Text = "Frameskip";
+            // 
+            // menuItem14
+            // 
+            this.menuItem14.Index = 0;
+            this.menuItem14.Text = "None";
+            // 
+            // menuItem15
+            // 
+            this.menuItem15.Index = 1;
+            this.menuItem15.Text = "1";
+            // 
+            // menuItem16
+            // 
+            this.menuItem16.Index = 2;
+            this.menuItem16.Text = "2";
+            // 
+            // menuItem17
+            // 
+            this.menuItem17.Index = 3;
+            this.menuItem17.Text = "3";
+            // 
+            // menuItem18
+            // 
+            this.menuItem18.Index = 4;
+            this.menuItem18.Text = "4";
             // 
             // frmNano
             // 
@@ -144,5 +268,22 @@ namespace nanoboy
         private System.Windows.Forms.PictureBox gameView;
         private System.Windows.Forms.OpenFileDialog openRom;
         private System.Windows.Forms.MenuItem menuAbout;
+        private System.Windows.Forms.MenuItem menuItem1;
+        private System.Windows.Forms.MenuItem menuItem2;
+        private System.Windows.Forms.MenuItem menuItem3;
+        private System.Windows.Forms.MenuItem menuItem5;
+        private System.Windows.Forms.MenuItem menuItem6;
+        private System.Windows.Forms.MenuItem menuItem7;
+        private System.Windows.Forms.MenuItem menuItem8;
+        private System.Windows.Forms.MenuItem menuItem9;
+        private System.Windows.Forms.MenuItem menuItem10;
+        private System.Windows.Forms.MenuItem menuItem11;
+        private System.Windows.Forms.MenuItem menuItem12;
+        private System.Windows.Forms.MenuItem menuItem13;
+        private System.Windows.Forms.MenuItem menuItem14;
+        private System.Windows.Forms.MenuItem menuItem15;
+        private System.Windows.Forms.MenuItem menuItem16;
+        private System.Windows.Forms.MenuItem menuItem17;
+        private System.Windows.Forms.MenuItem menuItem18;
     }
 }
