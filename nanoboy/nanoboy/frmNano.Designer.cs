@@ -57,7 +57,6 @@ namespace nanoboy
             this.menuAbout = new System.Windows.Forms.MenuItem();
             this.gameView = new System.Windows.Forms.PictureBox();
             this.openRom = new System.Windows.Forms.OpenFileDialog();
-            this.gameRunner = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gameView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -116,11 +115,6 @@ namespace nanoboy
             this.openRom.Filter = "Gameboy ROMs (*.gb)|*.gb";
             this.openRom.InitialDirectory = "./ROMS";
             // 
-            // gameRunner
-            // 
-            this.gameRunner.Interval = 13;
-            this.gameRunner.Tick += new System.EventHandler(this.gameRunner_Tick);
-            // 
             // frmNano
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -149,7 +143,6 @@ namespace nanoboy
         private System.Windows.Forms.MenuItem menuItem4;
         private System.Windows.Forms.PictureBox gameView;
         private System.Windows.Forms.OpenFileDialog openRom;
-        private System.Windows.Forms.Timer gameRunner;
         private System.Windows.Forms.MenuItem menuAbout;
     }
 }

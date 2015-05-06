@@ -52,7 +52,6 @@ namespace nanoboy
             {
                 ROM rom = new ROM(openRom.FileName, "BATTERY\\" +  Path.GetFileNameWithoutExtension(openRom.FileName) + ".sav");
                 nano = new Nanoboy(rom);
-                //gameRunner.Start();
                 gamethread = new Thread(delegate() {
                     Stopwatch stopwatch = new Stopwatch();
                     while (true) {
@@ -78,10 +77,32 @@ namespace nanoboy
         #endregion
 
         #region "Update"
-        private void gameRunner_Tick(object sender, EventArgs e)
+        private Image ResizeImage(Image image, Size size, bool preserveAspectRatio = true)
         {
-            nano.Frame();
-            gameView.Image = new Bitmap(nano.Image, gameView.Size); //this.ResizeImage(nano.Image, gameView.Size, false);
+            int newWidth;
+            int newHeight;
+            if (preserveAspectRatio)
+            {
+                int originalWidth = image.Width;
+                int originalHeight = image.Height;
+                float percentWidth = (float)size.Width / (float)originalWidth;
+                float percentHeight = (float)size.Height / (float)originalHeight;
+                float percent = percentHeight < percentWidth ? percentHeight : percentWidth;
+                newWidth = (int)(originalWidth * percent);
+                newHeight = (int)(originalHeight * percent);
+            }
+            else
+            {
+                newWidth = size.Width;
+                newHeight = size.Height;
+            }
+            Image newImage = new Bitmap(newWidth, newHeight);
+            using (Graphics graphicsHandle = Graphics.FromImage(newImage))
+            {
+                graphicsHandle.InterpolationMode = InterpolationMode.NearestNeighbor;
+                graphicsHandle.DrawImage(image, 0, 0, newWidth, newHeight);
+            }
+            return newImage;
         }
         #endregion
 
