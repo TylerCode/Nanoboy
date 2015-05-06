@@ -99,13 +99,13 @@ namespace nanoboy.Core.Audio.Backend.NAudio
     {
         public List<ISoundChannel> Channels { get; set; }
         private Mixer mixer;
-        private WaveOut waveOut;
+        private DirectSoundOut waveOut;
 
         public AudioPlayer()
         {
             Channels = new List<ISoundChannel>();
             mixer = new Mixer();
-            waveOut = new WaveOut();
+            waveOut = new DirectSoundOut();
         }
 
         public void Start()
