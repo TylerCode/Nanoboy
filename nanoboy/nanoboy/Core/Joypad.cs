@@ -80,7 +80,7 @@ namespace nanoboy.Core
                     KeyA = status;
                     break;
             }
-            if (status) {
+            if (!status) {
                 interrupt.IF |= 16;
             }
         }

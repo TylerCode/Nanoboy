@@ -66,6 +66,7 @@ namespace nanoboy
                         }
                     }
                 });
+                gamethread.Priority = ThreadPriority.Highest;
                 gamethread.Start();
             }
         }

@@ -23,7 +23,7 @@ using System.Windows.Forms;
 
 namespace nanoboy.Core
 {
-    public sealed class Nanoboy
+    public sealed class Nanoboy : IDisposable
     {
 
         public Bitmap Image
@@ -47,33 +47,8 @@ namespace nanoboy.Core
         public void Frame()
         {
             int cyclesleft = 0;
-            /*bool framefinished = false;
-            bool doublespeed = true;
-            while (!framefinished) {
-                cyclesleft = cpu.Tick();
-                memory.Interrupt.Tick();
-                if (cpu.IsDoubleSpeed || doublespeed) {
-                    for (int i = 0; i < cyclesleft / 2; i++) {
-                        memory.Video.Tick();
-                        memory.Timer.Tick(true);
-                        memory.Timer.Tick(true);
-                        memory.channel1.Tick();
-                        //memory.channel1.Tick();
-                        memory.channel2.Tick();
-                       // memory.channel2.Tick();
-                    }
-                } else {
-                    for (int i = 0; i < cyclesleft; i++) {
-                        memory.Video.Tick();
-                        memory.Timer.Tick(false);
-                        memory.channel1.Tick();
-                        memory.channel2.Tick();
-                    }
-                }
-                framefinished = memory.Video.FrameReady;
-            }*/
             for (int i = 0; i < 70224; i++) {
-                for (int j = 0; j < 4; j++) {
+                for (int j = 0; j < 4 * (cpu.IsDoubleSpeed ? 2 : 1); j++) {
                     if (cyclesleft == 0) {
                         cyclesleft = cpu.Tick();
                     }
@@ -147,5 +122,10 @@ namespace nanoboy.Core
             memory.Joypad.Set(key, true);
         }
 
+
+        public void Dispose()
+        {
+            memory.Dispose();
+        }
     }
 }
