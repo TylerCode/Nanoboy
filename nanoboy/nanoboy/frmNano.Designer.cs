@@ -80,9 +80,8 @@ namespace nanoboy
             this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuAbout = new System.Windows.Forms.MenuItem();
-            this.gameView = new System.Windows.Forms.PictureBox();
             this.openRom = new System.Windows.Forms.OpenFileDialog();
-            ((System.ComponentModel.ISupportInitialize)(this.gameView)).BeginInit();
+            this.gameView = new OpenTK.GLControl();
             this.SuspendLayout();
             // 
             // nanoMenu
@@ -285,22 +284,27 @@ namespace nanoboy
             this.menuAbout.Text = "About";
             this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
             // 
+            // openRom
+            // 
+            this.openRom.Filter = "Gameboy ROMs (*.gb, *.gbc)|*.gb;*.gbc";
+            this.openRom.InitialDirectory = "./ROMS";
+            // 
             // gameView
             // 
             this.gameView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gameView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+            this.gameView.BackColor = System.Drawing.Color.Black;
             this.gameView.Location = new System.Drawing.Point(0, 0);
             this.gameView.Name = "gameView";
             this.gameView.Size = new System.Drawing.Size(320, 288);
             this.gameView.TabIndex = 0;
-            this.gameView.TabStop = false;
-            // 
-            // openRom
-            // 
-            this.openRom.Filter = "Gameboy ROMs (*.gb, *.gbc)|*.gb;*.gbc";
-            this.openRom.InitialDirectory = "./ROMS";
+            this.gameView.VSync = false;
+            this.gameView.Load += new System.EventHandler(this.gameView_Load);
+            this.gameView.Paint += new System.Windows.Forms.PaintEventHandler(this.gameView_Paint);
+            this.gameView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.gameView_KeyUp);
+            this.gameView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.gameView_PreviewKeyDown);
+            this.gameView.Resize += new System.EventHandler(this.gameView_Resize);
             // 
             // frmNano
             // 
@@ -314,9 +318,6 @@ namespace nanoboy
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Nanoboy v0.9";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmNano_FormClosing);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.frmNano_KeyUp);
-            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.frmNano_PreviewKeyDown);
-            ((System.ComponentModel.ISupportInitialize)(this.gameView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -328,7 +329,6 @@ namespace nanoboy
         private System.Windows.Forms.MenuItem menuOpen;
         private System.Windows.Forms.MenuItem menuClose;
         private System.Windows.Forms.MenuItem menuItem4;
-        private System.Windows.Forms.PictureBox gameView;
         private System.Windows.Forms.OpenFileDialog openRom;
         private System.Windows.Forms.MenuItem menuAbout;
         private System.Windows.Forms.MenuItem menuItem1;
@@ -356,5 +356,6 @@ namespace nanoboy
         private System.Windows.Forms.MenuItem menuSizeFull;
         private System.Windows.Forms.MenuItem menuItem20;
         private System.Windows.Forms.MenuItem menuPreserveAspect;
+        private OpenTK.GLControl gameView;
     }
 }

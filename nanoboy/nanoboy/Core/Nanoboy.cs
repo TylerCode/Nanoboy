@@ -26,7 +26,7 @@ namespace nanoboy.Core
     public sealed class Nanoboy : IDisposable
     {
 
-        public Bitmap Image
+        public IntPtr Image
         {
             get
             {

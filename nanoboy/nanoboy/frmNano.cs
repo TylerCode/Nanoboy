@@ -27,6 +27,8 @@ using nanoboy.Core;
 using System.Threading;
 using System.Diagnostics;
 
+using OpenTK.Graphics.OpenGL;
+
 namespace nanoboy
 {
     public partial class frmNano : Form
@@ -35,6 +37,8 @@ namespace nanoboy
         private Nanoboy nano;
         private Thread gamethread;
         private bool preserveaspectratio;
+        private bool loadedgl;
+        private int textureid = -1;
 
         public frmNano()
         {
@@ -59,7 +63,7 @@ namespace nanoboy
                         stopwatch.Reset();
                         stopwatch.Start();
                         nano.Frame();
-                        this.gameView.Image = this.ResizeImage(nano.Image, gameView.Size, preserveaspectratio);
+                        gameView.Refresh();
                         stopwatch.Stop();
                         if (stopwatch.ElapsedMilliseconds < 13) {
                             Thread.Sleep(13 - (int)stopwatch.ElapsedMilliseconds);
@@ -158,17 +162,77 @@ namespace nanoboy
             }
             return newImage;
         }
+
+        private void gameView_Load(object sender, EventArgs e)
+        {
+            loadedgl = true;
+            GL.ClearColor(Color.Black);
+            GL.Enable(EnableCap.Texture2D);
+            SetupViewport();
+        }
+
+        private void SetupViewport()
+        {
+            int width = gameView.Width;
+            int height = gameView.Height;
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            GL.Ortho(0, width, height, 0, -1, 1);
+            GL.Viewport(0, 0, width, height);
+        }
+
+        private void gameView_Paint(object sender, PaintEventArgs e)
+        {
+            if (loadedgl && nano != null) {
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                GL.MatrixMode(MatrixMode.Modelview);
+                GL.LoadIdentity();
+                textureid = TextureFromArray(nano.Image, textureid);
+                GL.BindTexture(TextureTarget.Texture2D, textureid);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+                GL.Begin(PrimitiveType.Quads);
+                {
+                    GL.TexCoord2(0f, 0f);
+                    GL.Vertex2(0f, 0f);
+                    GL.TexCoord2(1f, 0f);
+                    GL.Vertex2(gameView.Width, 0f);
+                    GL.TexCoord2(1f, 1f);
+                    GL.Vertex2(gameView.Width, gameView.Height);
+                    GL.TexCoord2(0f, 1f);
+                    GL.Vertex2(0f, gameView.Height);
+                }
+                GL.End();
+
+                gameView.SwapBuffers();
+            }
+        }
+
+        public static int TextureFromArray(IntPtr arrayptr, int texturexid = -1)
+        {
+            int id = texturexid == -1 ? GL.GenTexture() : texturexid;
+            GL.BindTexture(TextureTarget.Texture2D, id);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, 160, 144, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, arrayptr);
+            return id;
+        }
+
+        private void gameView_Resize(object sender, EventArgs e)
+        {
+            SetupViewport();
+        }
         #endregion
 
         #region Joypad
-        private void frmNano_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        private void gameView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (nano != null) {
                 nano.SetKey(e.KeyCode);
             }
         }
 
-        private void frmNano_KeyUp(object sender, KeyEventArgs e)
+        private void gameView_KeyUp(object sender, KeyEventArgs e)
         {
             if (nano != null) {
                 nano.UnsetKey(e.KeyCode);
