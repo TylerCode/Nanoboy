@@ -52,28 +52,36 @@ namespace nanoboy
             this.nanoMenu = new System.Windows.Forms.MainMenu(this.components);
             this.menuFile = new System.Windows.Forms.MenuItem();
             this.menuOpen = new System.Windows.Forms.MenuItem();
+            this.menuItem12 = new System.Windows.Forms.MenuItem();
             this.menuClose = new System.Windows.Forms.MenuItem();
-            this.menuItem4 = new System.Windows.Forms.MenuItem();
-            this.menuAbout = new System.Windows.Forms.MenuItem();
-            this.gameView = new System.Windows.Forms.PictureBox();
-            this.openRom = new System.Windows.Forms.OpenFileDialog();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
-            this.menuItem3 = new System.Windows.Forms.MenuItem();
-            this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.menuItem6 = new System.Windows.Forms.MenuItem();
             this.menuItem7 = new System.Windows.Forms.MenuItem();
             this.menuItem8 = new System.Windows.Forms.MenuItem();
             this.menuItem9 = new System.Windows.Forms.MenuItem();
             this.menuItem10 = new System.Windows.Forms.MenuItem();
             this.menuItem11 = new System.Windows.Forms.MenuItem();
-            this.menuItem12 = new System.Windows.Forms.MenuItem();
+            this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuItem13 = new System.Windows.Forms.MenuItem();
             this.menuItem14 = new System.Windows.Forms.MenuItem();
             this.menuItem15 = new System.Windows.Forms.MenuItem();
             this.menuItem16 = new System.Windows.Forms.MenuItem();
             this.menuItem17 = new System.Windows.Forms.MenuItem();
             this.menuItem18 = new System.Windows.Forms.MenuItem();
+            this.menuItem19 = new System.Windows.Forms.MenuItem();
+            this.menuSize1 = new System.Windows.Forms.MenuItem();
+            this.menuSize2 = new System.Windows.Forms.MenuItem();
+            this.menuSize3 = new System.Windows.Forms.MenuItem();
+            this.menuSize4 = new System.Windows.Forms.MenuItem();
+            this.menuSizeFull = new System.Windows.Forms.MenuItem();
+            this.menuItem20 = new System.Windows.Forms.MenuItem();
+            this.menuPreserveAspect = new System.Windows.Forms.MenuItem();
+            this.menuItem5 = new System.Windows.Forms.MenuItem();
+            this.menuItem4 = new System.Windows.Forms.MenuItem();
+            this.menuAbout = new System.Windows.Forms.MenuItem();
+            this.gameView = new System.Windows.Forms.PictureBox();
+            this.openRom = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.gameView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -99,41 +107,16 @@ namespace nanoboy
             this.menuOpen.Text = "&Open";
             this.menuOpen.Click += new System.EventHandler(this.menuOpen_Click);
             // 
+            // menuItem12
+            // 
+            this.menuItem12.Index = 1;
+            this.menuItem12.Text = "-";
+            // 
             // menuClose
             // 
             this.menuClose.Index = 2;
             this.menuClose.Text = "Close";
             this.menuClose.Click += new System.EventHandler(this.menuClose_Click);
-            // 
-            // menuItem4
-            // 
-            this.menuItem4.Index = 2;
-            this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuAbout});
-            this.menuItem4.Text = "?";
-            // 
-            // menuAbout
-            // 
-            this.menuAbout.Index = 0;
-            this.menuAbout.Text = "About";
-            this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
-            // 
-            // gameView
-            // 
-            this.gameView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gameView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-            this.gameView.Location = new System.Drawing.Point(0, 0);
-            this.gameView.Name = "gameView";
-            this.gameView.Size = new System.Drawing.Size(320, 288);
-            this.gameView.TabIndex = 0;
-            this.gameView.TabStop = false;
-            // 
-            // openRom
-            // 
-            this.openRom.Filter = "Gameboy ROMs (*.gb, *.gbc)|*.gb;*.gbc";
-            this.openRom.InitialDirectory = "./ROMS";
             // 
             // menuItem1
             // 
@@ -155,18 +138,6 @@ namespace nanoboy
             this.menuItem10,
             this.menuItem11});
             this.menuItem2.Text = "Audio";
-            // 
-            // menuItem3
-            // 
-            this.menuItem3.Index = 1;
-            this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItem13});
-            this.menuItem3.Text = "Video";
-            // 
-            // menuItem5
-            // 
-            this.menuItem5.Index = 2;
-            this.menuItem5.Text = "Controls";
             // 
             // menuItem6
             // 
@@ -198,10 +169,13 @@ namespace nanoboy
             this.menuItem11.Index = 5;
             this.menuItem11.Text = "Channel 4";
             // 
-            // menuItem12
+            // menuItem3
             // 
-            this.menuItem12.Index = 1;
-            this.menuItem12.Text = "-";
+            this.menuItem3.Index = 1;
+            this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem13,
+            this.menuItem19});
+            this.menuItem3.Text = "Video";
             // 
             // menuItem13
             // 
@@ -238,6 +212,95 @@ namespace nanoboy
             // 
             this.menuItem18.Index = 4;
             this.menuItem18.Text = "4";
+            // 
+            // menuItem19
+            // 
+            this.menuItem19.Index = 1;
+            this.menuItem19.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuSize1,
+            this.menuSize2,
+            this.menuSize3,
+            this.menuSize4,
+            this.menuSizeFull,
+            this.menuItem20,
+            this.menuPreserveAspect});
+            this.menuItem19.Text = "Size";
+            // 
+            // menuSize1
+            // 
+            this.menuSize1.Index = 0;
+            this.menuSize1.Text = "1x";
+            this.menuSize1.Click += new System.EventHandler(this.menuSize1_Click);
+            // 
+            // menuSize2
+            // 
+            this.menuSize2.Index = 1;
+            this.menuSize2.Text = "2x";
+            this.menuSize2.Click += new System.EventHandler(this.menuSize2_Click);
+            // 
+            // menuSize3
+            // 
+            this.menuSize3.Index = 2;
+            this.menuSize3.Text = "3x";
+            this.menuSize3.Click += new System.EventHandler(this.menuSize3_Click);
+            // 
+            // menuSize4
+            // 
+            this.menuSize4.Index = 3;
+            this.menuSize4.Text = "4x";
+            this.menuSize4.Click += new System.EventHandler(this.menuSize4_Click);
+            // 
+            // menuSizeFull
+            // 
+            this.menuSizeFull.Index = 4;
+            this.menuSizeFull.Text = "Fullscreen";
+            this.menuSizeFull.Click += new System.EventHandler(this.menuSizeFull_Click);
+            // 
+            // menuItem20
+            // 
+            this.menuItem20.Index = 5;
+            this.menuItem20.Text = "-";
+            // 
+            // menuPreserveAspect
+            // 
+            this.menuPreserveAspect.Index = 6;
+            this.menuPreserveAspect.Text = "Preserve Aspect Ratio";
+            this.menuPreserveAspect.Click += new System.EventHandler(this.menuPreserveAspect_Click);
+            // 
+            // menuItem5
+            // 
+            this.menuItem5.Index = 2;
+            this.menuItem5.Text = "Controls";
+            // 
+            // menuItem4
+            // 
+            this.menuItem4.Index = 2;
+            this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuAbout});
+            this.menuItem4.Text = "?";
+            // 
+            // menuAbout
+            // 
+            this.menuAbout.Index = 0;
+            this.menuAbout.Text = "About";
+            this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
+            // 
+            // gameView
+            // 
+            this.gameView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gameView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+            this.gameView.Location = new System.Drawing.Point(0, 0);
+            this.gameView.Name = "gameView";
+            this.gameView.Size = new System.Drawing.Size(320, 288);
+            this.gameView.TabIndex = 0;
+            this.gameView.TabStop = false;
+            // 
+            // openRom
+            // 
+            this.openRom.Filter = "Gameboy ROMs (*.gb, *.gbc)|*.gb;*.gbc";
+            this.openRom.InitialDirectory = "./ROMS";
             // 
             // frmNano
             // 
@@ -285,5 +348,13 @@ namespace nanoboy
         private System.Windows.Forms.MenuItem menuItem16;
         private System.Windows.Forms.MenuItem menuItem17;
         private System.Windows.Forms.MenuItem menuItem18;
+        private System.Windows.Forms.MenuItem menuItem19;
+        private System.Windows.Forms.MenuItem menuSize1;
+        private System.Windows.Forms.MenuItem menuSize2;
+        private System.Windows.Forms.MenuItem menuSize3;
+        private System.Windows.Forms.MenuItem menuSize4;
+        private System.Windows.Forms.MenuItem menuSizeFull;
+        private System.Windows.Forms.MenuItem menuItem20;
+        private System.Windows.Forms.MenuItem menuPreserveAspect;
     }
 }

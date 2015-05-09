@@ -111,7 +111,12 @@ namespace nanoboy.Core
                 case Mbc.ROM_MBC3_TIMER_RAM_BATT:
                     MBC = new Mbc3(data, CartridgeType, ROMSize, save_path);
                     break;
+                case Mbc.ROM_MBC5:
+                case Mbc.ROM_MBC5_RAM:
                 case Mbc.ROM_MBC5_RAM_BATT:
+                case Mbc.ROM_MBC5_RUMBLE:
+                case Mbc.ROM_MBC5_RUMBLE_RAM:
+                case Mbc.ROM_MBC5_RUMBLE_RAM_BATT:
                     MBC = new Mbc3(data, CartridgeType, ROMSize, save_path);
                     break;
                 default:

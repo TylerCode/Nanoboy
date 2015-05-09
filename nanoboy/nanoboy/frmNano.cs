@@ -34,6 +34,7 @@ namespace nanoboy
 
         private Nanoboy nano;
         private Thread gamethread;
+        private bool preserveaspectratio;
 
         public frmNano()
         {
@@ -58,7 +59,7 @@ namespace nanoboy
                         stopwatch.Reset();
                         stopwatch.Start();
                         nano.Frame();
-                        this.gameView.Image = this.ResizeImage(nano.Image, gameView.Size, false);
+                        this.gameView.Image = this.ResizeImage(nano.Image, gameView.Size, preserveaspectratio);
                         stopwatch.Stop();
                         if (stopwatch.ElapsedMilliseconds < 13) {
                             Thread.Sleep(13 - (int)stopwatch.ElapsedMilliseconds);
@@ -78,6 +79,54 @@ namespace nanoboy
         private void menuAbout_Click(object sender, EventArgs e)
         {
             new frmAbout().ShowDialog();
+        }
+
+
+        private void menuSize1_Click(object sender, EventArgs e)
+        {
+            int diffwidth;
+            int diffheight;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            diffwidth = this.Width - gameView.Width;
+            diffheight = this.Height - gameView.Height;
+            this.Size = new Size(160 + diffwidth, 144 + diffheight);
+        }
+
+        private void menuSize2_Click(object sender, EventArgs e)
+        {
+            int diffwidth;
+            int diffheight;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            diffwidth = this.Width - gameView.Width;
+            diffheight = this.Height - gameView.Height;
+            this.Size = new Size(160 * 2 + diffwidth, 144 * 2 + diffheight);
+        }
+
+        private void menuSize3_Click(object sender, EventArgs e)
+        {
+            int diffwidth;
+            int diffheight;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            diffwidth = this.Width - gameView.Width;
+            diffheight = this.Height - gameView.Height;
+            this.Size = new Size(160 * 3 + diffwidth, 144 * 3 + diffheight);
+        }
+
+        private void menuSize4_Click(object sender, EventArgs e)
+        {
+            int diffwidth;
+            int diffheight;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            diffwidth = this.Width - gameView.Width;
+            diffheight = this.Height - gameView.Height;
+            this.Size = new Size(160 * 4 + diffwidth, 144 * 4 + diffheight);
+        }
+
+        private void menuSizeFull_Click(object sender, EventArgs e)
+        {
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Location = new Point(0, 0);
+            this.Size = new Size(Screen.FromControl(this).Bounds.Width, Screen.FromControl(this).Bounds.Height);
         }
         #endregion
 
@@ -134,5 +183,10 @@ namespace nanoboy
             }
         }
 
+        private void menuPreserveAspect_Click(object sender, EventArgs e)
+        {
+            preserveaspectratio = !preserveaspectratio;
+            menuPreserveAspect.Checked = preserveaspectratio;
+        }
     }
 }
