@@ -28,13 +28,14 @@ namespace nanoboy.Core
     public sealed class Video
     {
 
-        public Bitmap Frame
+        public IntPtr Frame
         {
             get
             {
                 GCHandle handle = GCHandle.Alloc(frame, GCHandleType.Pinned);
                 IntPtr pointer = Marshal.UnsafeAddrOfPinnedArrayElement(frame, 0);
-                return new Bitmap(160, 144, 160 * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, pointer);
+                return pointer;
+                //return new Bitmap(160, 144, 160 * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, pointer);
             }
         }
 
@@ -331,7 +332,7 @@ namespace nanoboy.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void DrawTile(uint[] tileline, int x, int y)
+        private void DrawTile(uint[] tileline, int x, int y, bool behindbackground = false)
         {
             int start = x < 0 ? 0 - x : 0;
             int length = x > 152 ? 160 - x : 8;
