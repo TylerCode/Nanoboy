@@ -79,7 +79,6 @@
   <ItemGroup>
     <Compile Include="Core\Audio\Backend\NAudio\AudioPlayer.cs" />
     <Compile Include="Core\Audio\Backend\ISoundChannel.cs" />
-    <Compile Include="Core\Audio\Backend\OpenAL\AudioPlayer.cs" />
     <Compile Include="Core\Audio\NoiseChannel.cs" />
     <Compile Include="Core\Audio\WaveChannel.cs" />
     <Compile Include="Core\Audio\QuadChannel.cs" />

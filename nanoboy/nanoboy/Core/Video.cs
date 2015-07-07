@@ -35,7 +35,6 @@ namespace nanoboy.Core
                 GCHandle handle = GCHandle.Alloc(frame, GCHandleType.Pinned);
                 IntPtr pointer = Marshal.UnsafeAddrOfPinnedArrayElement(frame, 0);
                 return pointer;
-                //return new Bitmap(160, 144, 160 * 4, System.Drawing.Imaging.PixelFormat.Format32bppPArgb, pointer);
             }
         }
 
