@@ -133,16 +133,16 @@ namespace nanoboy.Core
         /* Adapted from http://imrannazar.com/GameBoy-Emulation-in-JavaScript:-GPU-Timings */
         public void Tick()
         {
-            CoincidenceInterrupt = CoincidenceFlag && (LY == LYC) || !CoincidenceFlag && (LY != LYC);
+            CoincidenceFlag = LY == LYC;
+            if (CoincidenceInterrupt && CoincidenceFlag) {
+                interrupt.IF |= 2;
+            }
             clock++;
             // Update hardware
             switch (ModeFlag) 
             {
                 // Scanline (OAM)
                 case 2:
-                    if (OAMInterrupt) {
-                        //interrupt.IF |= 2;
-                    }
                     if (clock >= 80) {
                         ModeFlag = 3;
                         clock = 0;
@@ -163,9 +163,6 @@ namespace nanoboy.Core
                     break;
                 // HBlank
                 case 0:
-                    if (HBlankInterrupt) {
-                        //interrupt.IF |= 2;
-                    }
                     if (clock >= 204) {
                         clock = 0;
                         LY++;
@@ -182,9 +179,6 @@ namespace nanoboy.Core
                     break;
                 // VBlank
                 case 1:
-                    if (VBlankInterrupt) {
-                        //interrupt.IF |= 2;
-                    }
                     if (clock >= 456) {
                         clock = 0;
                         LY++;
