@@ -99,6 +99,7 @@ namespace nanoboy.Core
         private int clock;
         private Color[] monochromepalette;
         private uint[] frame;
+        private bool coincidenceinterrupttriggered;
 
         private struct SpriteEntry
         {
@@ -134,8 +135,9 @@ namespace nanoboy.Core
         public void Tick()
         {
             CoincidenceFlag = LY == LYC;
-            if (CoincidenceInterrupt && CoincidenceFlag) {
+            if (CoincidenceInterrupt && CoincidenceFlag && !coincidenceinterrupttriggered) {
                 interrupt.IF |= 2;
+                coincidenceinterrupttriggered = true;
             }
             clock++;
             // Update hardware
@@ -166,6 +168,7 @@ namespace nanoboy.Core
                     if (clock >= 204) {
                         clock = 0;
                         LY++;
+                        coincidenceinterrupttriggered = false;
                         if (LY == 144) {
                             // Enter VBlank
                             ModeFlag = 1;
