@@ -14,21 +14,65 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with nanoboy.  If not, see <http://www.gnu.org/licenses/>.
+ * along with nanoboy. If not, see <http://www.gnu.org/licenses/>.
  */
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace nanoboy.Core
 {
     /// <summary>
+    /// Handles a subscription.
+    /// </summary>
+    /// <typeparam name="T">The kind of information transmitted between observer and subject</typeparam>
+    public sealed class Subscription<T> : IDisposable
+    {
+        private List<IObserver<T>> observers;
+        private IObserver<T> observer;
+
+        public Subscription(List<IObserver<T>> observers, IObserver<T> observer)
+        {
+            this.observers = observers;
+            this.observer = observer;
+        }
+
+        public void Dispose()
+        {
+            if (observers.Contains(observer)) {
+                observers.Remove(observer);
+            }
+        }
+    }
+
+    /// <summary>
+    /// The class "CPUStatusUpdate" transmits debug information to an attached debugger.
+    /// </summary>
+    public sealed class CPUStatusUpdate
+    {
+        public enum UpdateReason
+        {
+            Exception,
+            Execution,
+            MemoryRead,
+            MemoryWrite,
+            Push,
+            Pop
+        }
+        public UpdateReason Reason { get; set; }
+        public int Offset { get; set; }
+        public int Value { get; set; }
+        public CPU CPU { get; set; }
+    }
+
+    /// <summary>
 	/// The class "CPU" represents the new cpu emulation core with delegates.
 	/// </summary>
-    public sealed class CPU
+    public sealed class CPU : IObservable<CPUStatusUpdate>
     {
         // Generic
-        private bool Running = true;
+        public bool Running { get; set; }
 
         // Registers
         private int a, f, b, c, d, e, h, l, sp, pc;
@@ -421,8 +465,12 @@ namespace nanoboy.Core
 #endregion
         };
 
+        // Debugging
+        private List<IObserver<CPUStatusUpdate>> observers;
+
         public CPU()
         {
+            Running = true;
             IME = false;
             #region Opcode table filling
                 opcode[0x00] = delegate() { // NOP
@@ -1972,11 +2020,34 @@ namespace nanoboy.Core
                     OP_SET_R8(7, ref a);
                     };                
             #endregion
+            observers = new List<IObserver<CPUStatusUpdate>>();
+        }
+
+        public IDisposable Subscribe(IObserver<CPUStatusUpdate> observer)
+        {
+            observers.Add(observer);
+            return new Subscription<CPUStatusUpdate>(observers, observer);
+        }
+
+        private void Notify(CPUStatusUpdate update)
+        {
+            for (int i = 0; i < observers.Count; i++) {
+                // TODO: Check what kinda weird stuff happens here.
+                if (observers[i] != null) {
+                    observers[i].OnNext(update);
+                }
+            }
         }
 
         public int Tick()
         {
-            byte op = ReadByte(pc);
+            byte op;
+            CPUStatusUpdate update = new CPUStatusUpdate();
+            update.Reason = CPUStatusUpdate.UpdateReason.Execution;
+            update.Offset = pc;
+            update.CPU = this;
+            Notify(update);
+            op = ReadByte(pc);
             cycleamountext = 0;
             wroteflagreg = false;
             if (!Running || WaitForInterrupt) {
@@ -2000,23 +2071,34 @@ namespace nanoboy.Core
             } else {
                 return cycleamountext;
             }
-            //return branched ? cyclesbranched[op] + cycleamountext : cycles[op] + cycleamountext;
         }
 
         // Stack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Push(int v)
         {
+            CPUStatusUpdate update = new CPUStatusUpdate();
             sp -= 2;
             WriteShort(sp, v);
+            update.Reason = CPUStatusUpdate.UpdateReason.Push;
+            update.Offset = sp;
+            update.Value = v;
+            update.CPU = this;
+            Notify(update);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int Pop()
         {
+            CPUStatusUpdate update = new CPUStatusUpdate();
             int v = ReadShort(sp);
+            update.Reason = CPUStatusUpdate.UpdateReason.Pop;
+            update.Offset = sp;
+            update.Value = v;
+            update.CPU = this;
+            Notify(update);
             sp += 2;
-            return v;
+            return v; // maybe re-read the value
         }
 
         // Interrupting
@@ -2032,7 +2114,13 @@ namespace nanoboy.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte ReadByte(int address)
         {
-            return Memory.ReadByte(address);
+            CPUStatusUpdate update = new CPUStatusUpdate();
+            update.Reason = CPUStatusUpdate.UpdateReason.MemoryRead;
+            update.Offset = address;
+            update.Value = Memory.ReadByte(address);
+            update.CPU = this;
+            Notify(update);
+            return Memory.ReadByte(address); // re-read the value because the debugger might've changed it
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -2044,6 +2132,12 @@ namespace nanoboy.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteByte(int address, int value)
         {
+            CPUStatusUpdate update = new CPUStatusUpdate();
+            update.Reason = CPUStatusUpdate.UpdateReason.MemoryWrite;
+            update.Offset = address;
+            update.Value = value;
+            update.CPU = this;
+            Notify(update);
             Memory.WriteByte(address, (byte)value);
         }
 

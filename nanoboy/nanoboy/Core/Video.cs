@@ -185,6 +185,7 @@ namespace nanoboy.Core
                     if (clock >= 456) {
                         clock = 0;
                         LY++;
+                        coincidenceinterrupttriggered = false;
                         if (LY == 145) {
                             // Enter VBlank Interrupt
                             interrupt.IF |= 1;
@@ -330,14 +331,9 @@ namespace nanoboy.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DrawTile(uint[] tileline, int x, int y, bool behindbackground = false)
         {
-            int start = x < 0 ? 0 - x : 0;
-            int length = x > 152 ? 160 - x : 8;
-            for (int i = start; i < length - start; i++) {
-                if (tileline[i] != 0) {
-                    try {
-                        frame[y * 160 + x + i - start] = tileline[i];
-                    } catch (Exception ex) {
-                    }
+            for (int i = 0; i < 8; i++) {
+                if (tileline[i] != 0 && x + i >= 0 && x + i < 160) {
+                    frame[y * 160 + x + i] = tileline[i];
                 }
             }
         }

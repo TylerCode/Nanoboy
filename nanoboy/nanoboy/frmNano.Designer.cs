@@ -78,6 +78,7 @@ namespace nanoboy
             this.menuItem20 = new System.Windows.Forms.MenuItem();
             this.menuPreserveAspect = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
+            this.menuItem21 = new System.Windows.Forms.MenuItem();
             this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuAbout = new System.Windows.Forms.MenuItem();
             this.openRom = new System.Windows.Forms.OpenFileDialog();
@@ -89,6 +90,7 @@ namespace nanoboy
             this.nanoMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuFile,
             this.menuItem1,
+            this.menuItem21,
             this.menuItem4});
             // 
             // menuFile
@@ -271,9 +273,14 @@ namespace nanoboy
             this.menuItem5.Index = 2;
             this.menuItem5.Text = "Controls";
             // 
+            // menuItem21
+            // 
+            this.menuItem21.Index = 2;
+            this.menuItem21.Text = "Tools";
+            // 
             // menuItem4
             // 
-            this.menuItem4.Index = 2;
+            this.menuItem4.Index = 3;
             this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuAbout});
             this.menuItem4.Text = "?";
@@ -357,5 +364,6 @@ namespace nanoboy
         private System.Windows.Forms.MenuItem menuItem20;
         private System.Windows.Forms.MenuItem menuPreserveAspect;
         private OpenTK.GLControl gameView;
+        private System.Windows.Forms.MenuItem menuItem21;
     }
 }

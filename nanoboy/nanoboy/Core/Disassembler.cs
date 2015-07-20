@@ -22,6 +22,19 @@ using System.Collections.Generic;
 
 namespace nanoboy.Core
 {
+    public sealed class Instruction
+    {
+        public string Text { get; set; }
+        public int Offset { get; set; }
+        public int Length { get; set; }
+        public Instruction(string text, int offset, int length)
+        {
+            Text = text;
+            Offset = offset;
+            Length = length;
+        }
+    }
+
 	/// <summary>
 	/// The class "Disassembler" contains a full opcode disassembler for the Gameboy Z80 cpu.
 	/// </summary>
@@ -547,63 +560,51 @@ namespace nanoboy.Core
 			this._memory = memory;
 		}
 		
-		public string[] Disassemble(int address, int count)
+		public Instruction[] Disassemble(int address, int count)
 		{
-			List<string> opcodes = new List<string>();
+			List<Instruction> opcodes = new List<Instruction>();
 			int ptr = address;
-			
-			for (int i = 0; i < count; i++)
-			{
+			for (int i = 0; i < count; i++) {
                 int pc = ptr;
 				byte opcode = this._memory.ReadByte(ptr);
                 string prototype;
-
-                if (opcode == 0xCB)
-                {
+                if (opcode == 0xCB) {
                     ptr++;
                     opcode = this._memory.ReadByte(ptr);
                     prototype = _prototypes_cb[opcode];
                 } else {
                     prototype = _prototypes[opcode];
                 }
-
                 ptr++;
-
-                if (prototype.Contains("d8"))
-                {
+                if (prototype.Contains("d8")) {
                     prototype = prototype.Replace("d8", string.Format("0x{0:X2}", _memory.ReadByte(ptr)));
                     ptr++;
                 }
-                if (prototype.Contains("d16"))
-                {
+                if (prototype.Contains("d16")) {
                     prototype = prototype.Replace("d16", string.Format("0x{0:X4}", (_memory.ReadByte(ptr + 1) << 8) + _memory.ReadByte(ptr)));
                     ptr += 2;
                 }
-                if (prototype.Contains("a8"))
-                {
+                if (prototype.Contains("a8")) {
                     prototype = prototype.Replace("a8", string.Format("0x{0:X4}", 0xff00 + _memory.ReadByte(ptr)));
                     ptr++;
                 }
-                if (prototype.Contains("a16"))
-                {
+                if (prototype.Contains("a16")) {
                     prototype = prototype.Replace("a16", string.Format("0x{0:X4}", (_memory.ReadByte(ptr + 1) << 8) + _memory.ReadByte(ptr)));
                     ptr += 2;
                 }
-                if (prototype.Contains("r8"))
-                {
+                if (prototype.Contains("r8")) {
                     int value = _memory.ReadByte(ptr);
                     if (value > 0x7F) value -= 256;
                     prototype = prototype.Replace("r8", string.Format("0x{0:X4}", ptr + value + 1));
                     ptr++;
                 }
-
-                opcodes.Add(string.Format("{0:X4} {1}", pc, prototype));
+                opcodes.Add(new Instruction(prototype, pc, ptr - pc));
 			}
 			
 			return opcodes.ToArray();
 		}
 
-        public int GetLength(int address)
+        /*public int GetLength(int address)
         {
             int length = 0;
             byte opcode = this._memory.ReadByte(address);
@@ -620,7 +621,6 @@ namespace nanoboy.Core
             if (prototype.Contains("a16")) length += 2;
             if (prototype.Contains("r8")) length++;
             return length;
-        }
-		
+        }*/
 	}
 }

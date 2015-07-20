@@ -65,8 +65,8 @@ namespace nanoboy
                         nano.Frame();
                         gameView.Refresh();
                         stopwatch.Stop();
-                        if (stopwatch.ElapsedMilliseconds < 13) {
-                            Thread.Sleep(13 - (int)stopwatch.ElapsedMilliseconds);
+                        if (stopwatch.ElapsedMilliseconds < 16) {
+                            Thread.Sleep(16 - (int)stopwatch.ElapsedMilliseconds);
                         }
                     }
                 });

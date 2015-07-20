@@ -83,6 +83,7 @@
     <Compile Include="Core\Audio\WaveChannel.cs" />
     <Compile Include="Core\Audio\QuadChannel.cs" />
     <Compile Include="Core\CPU.cs" />
+    <Compile Include="Core\Debugger.cs" />
     <Compile Include="Core\Disassembler.cs" />
     <Compile Include="Core\HDMA.cs" />
     <Compile Include="Core\IMemoryDevice.cs" />

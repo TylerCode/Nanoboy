@@ -22,7 +22,6 @@ using nanoboy.Core.Audio.Backend;
 
 namespace nanoboy.Core.Audio
 {
-    // TODO: Implement wave pattern duty
     public sealed class QuadChannel : ISoundChannel
     {
         public enum SweepMode
@@ -47,7 +46,6 @@ namespace nanoboy.Core.Audio
         private int sweepcycles;
 
         // Frequency
-        // TODO: It could be the case, that the last written frequency varies from the initial frequency
         public int Frequency {
             get {
                 return initialfrequency;
@@ -59,7 +57,6 @@ namespace nanoboy.Core.Audio
         }
         private int initialfrequency;
 
-        // TODO: Fix restart issue
         // Amplitude / Volumen sweep
         public EnvelopeMode EnvelopeDirection { get; set; }
         public int EnvelopeSweep { 
@@ -157,7 +154,6 @@ namespace nanoboy.Core.Audio
                     } else {
                         if (currentvolume != 0) {
                             currentvolume--;
-                            //Console.WriteLine("Decay!");
                         }
                     }
                 }
@@ -172,7 +168,6 @@ namespace nanoboy.Core.Audio
             currentfrequency = initialfrequency;
             sweepcycles = 0;
             soundlengthcycles = 0;
-            //currentvolume = 0; // lastwrittenvolume;
             envelopecycles = 0;
         }
 

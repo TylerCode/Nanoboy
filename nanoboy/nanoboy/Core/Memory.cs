@@ -39,6 +39,7 @@ namespace nanoboy.Core
         public QuadChannel channel1;
         public QuadChannel channel2;
         public WaveChannel channel3;
+        public NoiseChannel channel4;
         private AudioPlayer audio;
         private ISerialDevice serial;
 
@@ -54,10 +55,12 @@ namespace nanoboy.Core
             channel1 = new QuadChannel();
             channel2 = new QuadChannel();
             channel3 = new WaveChannel();
+            channel4 = new NoiseChannel();
             audio = new AudioPlayer();
             audio.Channels.Add(channel1);
             audio.Channels.Add(channel2);
             audio.Channels.Add(channel3);
+            audio.Channels.Add(channel4);
             audio.Start();
             serial = new SerialConsole();
             Interrupt = new Interrupt(cpu);
@@ -364,6 +367,26 @@ namespace nanoboy.Core
                         channel3.StopOnLengthExpired = (value & 0x40) == 0x40;
                         if ((value & 0x80) == 0x80) {
                             channel3.Restart();
+                        }
+                        break;
+                    case 0x20: // NR41 Channel 4 Sound Length
+                        channel4.SoundLengthData = value;
+                        break;
+                    case 0x21: // NR42 Channel 4 Volume Envelope
+                        channel4.EnvelopeSweep = value & 7;
+                        channel4.EnvelopeDirection = (NoiseChannel.EnvelopeMode)((value >> 3) & 1);
+                        channel4.Volume = (value >> 4) & 0xF;
+                        break;
+                    case 0x22: // NR43 Channel 4 Polynomial Counter
+                        channel4.ClockFrequency = value >> 4;
+                        channel4.CounterStep = (value & 8) == 8;
+                        channel4.Counter = channel4.CounterStep ? 0x7F : 0x7FFF;
+                        channel4.DividingRatio = value & 7;
+                        break;
+                    case 0x23: // NR44 Channel 4 Counter/consecutive; Initial
+                        channel4.StopOnLengthExpired = (value & 0x40) == 0x40;
+                        if ((value & 0x80) == 0x80) {
+                            channel4.Restart();
                         }
                         break;
                     // FF30-FF3F Wave Pattern RAM
