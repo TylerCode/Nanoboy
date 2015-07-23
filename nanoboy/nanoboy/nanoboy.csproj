@@ -32,7 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>
@@ -50,6 +50,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NAudio">
@@ -77,8 +78,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Audio\Backend\NAudio\AudioPlayer.cs" />
+    <Compile Include="Core\Audio\Audio.cs" />
     <Compile Include="Core\Audio\Backend\ISoundChannel.cs" />
+    <Compile Include="Core\Audio\Backend\OpenAL\ALSoundOut.cs" />
+    <Compile Include="Core\Audio\Backend\OpenAL\AudioPlayer.cs" />
     <Compile Include="Core\Audio\NoiseChannel.cs" />
     <Compile Include="Core\Audio\WaveChannel.cs" />
     <Compile Include="Core\Audio\QuadChannel.cs" />

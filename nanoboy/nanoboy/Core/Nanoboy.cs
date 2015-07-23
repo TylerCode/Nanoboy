@@ -57,10 +57,7 @@ namespace nanoboy.Core
                 }
                 memory.Interrupt.Tick();
                 memory.Video.Tick();
-                memory.channel1.Tick();
-                memory.channel2.Tick();
-                memory.channel3.Tick();
-                memory.channel4.Tick();
+                memory.Audio.Tick();
                 memory.Timer.Tick(false);
             }
             memory.Video.FrameReady = false;

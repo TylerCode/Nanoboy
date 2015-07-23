@@ -7,8 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using nanoboy.Core.Audio.Backend;
-using nanoboy.Core.Audio.Backend.NAudio;
 
 namespace nanoboy
 {

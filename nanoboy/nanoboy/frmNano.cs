@@ -56,6 +56,9 @@ namespace nanoboy
             if (openRom.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 ROM rom = new ROM(openRom.FileName, "BATTERY\\" +  Path.GetFileNameWithoutExtension(openRom.FileName) + ".sav");
+                if (nano != null) {
+                    nano.Dispose();
+                }
                 nano = new Nanoboy(rom);
                 gamethread = new Thread(delegate() {
                     Stopwatch stopwatch = new Stopwatch();
@@ -244,6 +247,9 @@ namespace nanoboy
         {
             if (gamethread != null) {
                 gamethread.Abort();
+            }
+            if (nano != null) {
+                nano.Dispose();
             }
         }
 
