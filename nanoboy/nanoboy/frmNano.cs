@@ -55,7 +55,7 @@ namespace nanoboy
             }
             if (openRom.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                ROM rom = new ROM(openRom.FileName, "BATTERY\\" +  Path.GetFileNameWithoutExtension(openRom.FileName) + ".sav");
+                ROM rom = new ROM(openRom.FileName, Path.ChangeExtension(openRom.FileName, "sav"));
                 if (nano != null) {
                     nano.Dispose();
                 }

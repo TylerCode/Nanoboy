@@ -131,7 +131,7 @@ namespace nanoboy.Core
             VRAMBank = 0;
         }
 
-        /* Adapted from http://imrannazar.com/GameBoy-Emulation-in-JavaScript:-GPU-Timings */
+        /* Partially adapted from http://imrannazar.com/GameBoy-Emulation-in-JavaScript:-GPU-Timings */
         public void Tick()
         {
             CoincidenceFlag = LY == LYC;

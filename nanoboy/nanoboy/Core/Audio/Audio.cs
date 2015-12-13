@@ -42,6 +42,7 @@ namespace nanoboy.Core.Audio
             Channel2.Tick();
             Channel3.Tick();
             Channel4.Tick();
+
             // At a frequency of 44,1khz read samples
             if (ticks++ == 95) {
                 float sample = Channel1.Next(44100) +
@@ -49,8 +50,10 @@ namespace nanoboy.Core.Audio
                                Channel3.Next(44100) +
                                Channel4.Next(44100);
                 samplebuffer.Add(sample);
-                if (samples++ == 44) {
-                    AudioAvailable(this, new AudioAvailableEventArgs(samplebuffer.ToArray()));
+                if (samples++ == 2048) {
+                    if (AudioAvailable != null) {
+                        AudioAvailable(this, new AudioAvailableEventArgs(samplebuffer.ToArray()));
+                    }
                     samplebuffer.Clear();
                     samples = 0;
                 }

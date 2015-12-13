@@ -38,11 +38,6 @@ namespace nanoboy.Core
         private int wrambank;
         private byte[] hram;
         private ALSoundOut soundout;
-        /*public QuadChannel audio.Channel1;
-        public QuadChannel audio.Channel2;
-        public WaveChannel audio.Channel3;
-        public NoiseChannel audio.Channel4;*/
-        //private AudioPlayer audioplayer;
         private ISerialDevice serial;
 
         public Memory(CPU cpu, ROM rom)
@@ -56,16 +51,6 @@ namespace nanoboy.Core
             hram = new byte[0x7F];
             Audio = new Audio.Audio();
             soundout = new ALSoundOut(Audio);
-            /*audio.Channel1 = new QuadChannel();
-            audio.Channel2 = new QuadChannel();
-            audio.audio.Channel3 = new WaveChannel();
-            audio.Channel4 = new NoiseChannel();
-            audioplayer = new AudioPlayer();
-            audioplayer.Channels.Add(audio.Channel1);
-            audioplayer.Channels.Add(audio.Channel2);
-            audioplayer.Channels.Add(audio.Channel3);
-            audioplayer.Channels.Add(audio.Channel4);*/
-            //audio.Start();
             serial = new SerialConsole();
             Interrupt = new Interrupt(cpu);
             Video = new Video(Interrupt, hdma, rom);
