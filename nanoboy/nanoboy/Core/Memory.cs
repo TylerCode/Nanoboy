@@ -512,7 +512,7 @@ namespace nanoboy.Core
 
         public void Dispose()
         {
-            //audio.Dispose();
+            soundout.Dispose();
         }
     }
 }

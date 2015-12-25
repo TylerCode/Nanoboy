@@ -83,6 +83,5 @@ namespace nanoboy.Core.Audio
                 ticks = 0;
             }
         }
-
     }
 }
