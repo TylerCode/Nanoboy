@@ -36,6 +36,9 @@ namespace nanoboy.Core.Audio
             Increase = 1
         }
 
+        // Enables or disables the channel
+        public bool Enabled { get; set; }
+
         // Sweep
         public int SweepTime { get; set; }
         public SweepMode SweepDirection { get; set; }
@@ -98,6 +101,7 @@ namespace nanoboy.Core.Audio
             lastfrequency = 0;
             currentfrequency = 0;
             sweepcycles = 0;
+            Enabled = true;
         }
 
         public float Next(int samplerate)
@@ -182,7 +186,7 @@ namespace nanoboy.Core.Audio
             if (realx <= 2 * Math.PI * duty) {
                 return 1f;
             }
-            return -1f;
+            return 0f;
         }
     }
 }

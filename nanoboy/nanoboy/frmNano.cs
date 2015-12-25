@@ -35,15 +35,18 @@ namespace nanoboy
     {
 
         private Nanoboy nano;
+        private NanoboySettings settings;
         private Thread gamethread;
-        private bool preserveaspectratio;
         private bool loadedgl;
         private int textureid = -1;
+        private bool speedup = false;
 
         public frmNano()
         {
             InitializeComponent();
             frmNano.CheckForIllegalCrossThreadCalls = false;
+            settings = new NanoboySettings();
+            LoadConfiguration(); // set checkboxes according to the settings
         }
 
         #region "Menu"
@@ -53,13 +56,14 @@ namespace nanoboy
                 gamethread.Abort();
                 nano.Dispose();
             }
-            if (openRom.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (openRom.ShowDialog() == DialogResult.OK)
             {
                 ROM rom = new ROM(openRom.FileName, Path.ChangeExtension(openRom.FileName, "sav"));
                 if (nano != null) {
                     nano.Dispose();
                 }
                 nano = new Nanoboy(rom);
+                nano.SetSettings(settings);
                 gamethread = new Thread(delegate() {
                     Stopwatch stopwatch = new Stopwatch();
                     while (true) {
@@ -68,7 +72,7 @@ namespace nanoboy
                         nano.Frame();
                         gameView.Refresh();
                         stopwatch.Stop();
-                        if (stopwatch.ElapsedMilliseconds < 16) {
+                        if (stopwatch.ElapsedMilliseconds < 16 && !speedup) {
                             Thread.Sleep(16 - (int)stopwatch.ElapsedMilliseconds);
                         }
                     }
@@ -91,42 +95,26 @@ namespace nanoboy
 
         private void menuSize1_Click(object sender, EventArgs e)
         {
-            int diffwidth;
-            int diffheight;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
-            diffwidth = this.Width - gameView.Width;
-            diffheight = this.Height - gameView.Height;
-            this.Size = new Size(160 + diffwidth, 144 + diffheight);
+            ResizeWindow(1);
+            LoadConfiguration();
         }
 
         private void menuSize2_Click(object sender, EventArgs e)
         {
-            int diffwidth;
-            int diffheight;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
-            diffwidth = this.Width - gameView.Width;
-            diffheight = this.Height - gameView.Height;
-            this.Size = new Size(160 * 2 + diffwidth, 144 * 2 + diffheight);
+            ResizeWindow(2);
+            LoadConfiguration();
         }
 
         private void menuSize3_Click(object sender, EventArgs e)
         {
-            int diffwidth;
-            int diffheight;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
-            diffwidth = this.Width - gameView.Width;
-            diffheight = this.Height - gameView.Height;
-            this.Size = new Size(160 * 3 + diffwidth, 144 * 3 + diffheight);
+            ResizeWindow(3);
+            LoadConfiguration();
         }
 
         private void menuSize4_Click(object sender, EventArgs e)
         {
-            int diffwidth;
-            int diffheight;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
-            diffwidth = this.Width - gameView.Width;
-            diffheight = this.Height - gameView.Height;
-            this.Size = new Size(160 * 4 + diffwidth, 144 * 4 + diffheight);
+            ResizeWindow(4);
+            LoadConfiguration();
         }
 
         private void menuSizeFull_Click(object sender, EventArgs e)
@@ -134,6 +122,82 @@ namespace nanoboy
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Location = new Point(0, 0);
             this.Size = new Size(Screen.FromControl(this).Bounds.Width, Screen.FromControl(this).Bounds.Height);
+        }
+
+        private void menuAudioC1_Click(object sender, EventArgs e)
+        {
+            menuAudioC1.Checked = !menuAudioC1.Checked;
+            settings.Channel1Enable = menuAudioC1.Checked;
+            UpdateEmulatorSettings();
+        }
+
+        private void menuAudioC2_Click(object sender, EventArgs e)
+        {
+            menuAudioC2.Checked = !menuAudioC2.Checked;
+            settings.Channel2Enable = menuAudioC2.Checked;
+            UpdateEmulatorSettings();
+        }
+
+        private void menuAudioC3_Click(object sender, EventArgs e)
+        {
+            menuAudioC3.Checked = !menuAudioC3.Checked;
+            settings.Channel3Enable = menuAudioC3.Checked;
+            UpdateEmulatorSettings();
+        }
+
+        private void menuAudioC4_Click(object sender, EventArgs e)
+        {
+            menuAudioC4.Checked = !menuAudioC4.Checked;
+            settings.Channel4Enable = menuAudioC4.Checked;
+            UpdateEmulatorSettings();
+        }
+
+        private void menuAudioOn_Click(object sender, EventArgs e)
+        {
+            menuAudioOn.Checked = !menuAudioOn.Checked;
+            settings.AudioEnable = menuAudioOn.Checked;
+            UpdateEmulatorSettings();
+        }
+
+        private void menuFrameSkip0_Click(object sender, EventArgs e)
+        {
+            settings.Frameskip = 0;
+            UpdateEmulatorSettings();
+            LoadConfiguration();
+        }
+
+        private void menuFrameSkip1_Click(object sender, EventArgs e)
+        {
+            settings.Frameskip = 1;
+            UpdateEmulatorSettings();
+            LoadConfiguration();
+        }
+
+        private void menuFrameSkip2_Click(object sender, EventArgs e)
+        {
+            settings.Frameskip = 2;
+            UpdateEmulatorSettings();
+            LoadConfiguration();
+        }
+
+        private void menuFrameSkip3_Click(object sender, EventArgs e)
+        {
+            settings.Frameskip = 3;
+            UpdateEmulatorSettings();
+            LoadConfiguration();
+        }
+
+        private void menuFrameSkip4_Click(object sender, EventArgs e)
+        {
+            settings.Frameskip = 4;
+            UpdateEmulatorSettings();
+            LoadConfiguration();
+        }
+
+        private void menuControls_Click(object sender, EventArgs e)
+        {
+            frmControls controls = new frmControls(settings);
+            controls.ShowDialog();
         }
         #endregion
 
@@ -231,6 +295,9 @@ namespace nanoboy
         private void gameView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (nano != null) {
+                if (e.KeyCode == Keys.Space) {
+                    speedup = true;
+                }
                 nano.SetKey(e.KeyCode);
             }
         }
@@ -238,6 +305,9 @@ namespace nanoboy
         private void gameView_KeyUp(object sender, KeyEventArgs e)
         {
             if (nano != null) {
+                if (e.KeyCode == Keys.Space) {
+                    speedup = true;
+                }
                 nano.UnsetKey(e.KeyCode);
             }
         }
@@ -253,10 +323,42 @@ namespace nanoboy
             }
         }
 
-        private void menuPreserveAspect_Click(object sender, EventArgs e)
+        private void ResizeWindow(int size)
         {
-            preserveaspectratio = !preserveaspectratio;
-            menuPreserveAspect.Checked = preserveaspectratio;
+            int diffwidth;
+            int diffheight;
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            diffwidth = this.Width - gameView.Width;
+            diffheight = this.Height - gameView.Height;
+            this.Size = new Size(160 * size + diffwidth, 144 * size + diffheight);
+            settings.VideoScaleFactor = size;
+            UpdateEmulatorSettings();
+        }
+
+        private void LoadConfiguration()
+        {
+            menuAudioC1.Checked = settings.Channel1Enable;
+            menuAudioC2.Checked = settings.Channel2Enable;
+            menuAudioC3.Checked = settings.Channel3Enable;
+            menuAudioC4.Checked = settings.Channel4Enable;
+            menuAudioOn.Checked = settings.AudioEnable;
+            menuSize1.Checked = settings.VideoScaleFactor == 1;
+            menuSize2.Checked = settings.VideoScaleFactor == 2;
+            menuSize3.Checked = settings.VideoScaleFactor == 3;
+            menuSize4.Checked = settings.VideoScaleFactor == 4;
+            ResizeWindow(settings.VideoScaleFactor);
+            menuFrameSkip0.Checked = settings.Frameskip == 0;
+            menuFrameSkip1.Checked = settings.Frameskip == 1;
+            menuFrameSkip2.Checked = settings.Frameskip == 2;
+            menuFrameSkip3.Checked = settings.Frameskip == 3;
+            menuFrameSkip4.Checked = settings.Frameskip == 4;
+        }
+
+        private void UpdateEmulatorSettings()
+        {
+            if (nano != null) {
+                nano.SetSettings(settings);
+            }
         }
     }
 }

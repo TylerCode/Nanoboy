@@ -56,19 +56,19 @@ namespace nanoboy
             this.menuClose = new System.Windows.Forms.MenuItem();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
-            this.menuItem6 = new System.Windows.Forms.MenuItem();
+            this.menuAudioOn = new System.Windows.Forms.MenuItem();
             this.menuItem7 = new System.Windows.Forms.MenuItem();
-            this.menuItem8 = new System.Windows.Forms.MenuItem();
-            this.menuItem9 = new System.Windows.Forms.MenuItem();
-            this.menuItem10 = new System.Windows.Forms.MenuItem();
-            this.menuItem11 = new System.Windows.Forms.MenuItem();
+            this.menuAudioC1 = new System.Windows.Forms.MenuItem();
+            this.menuAudioC2 = new System.Windows.Forms.MenuItem();
+            this.menuAudioC3 = new System.Windows.Forms.MenuItem();
+            this.menuAudioC4 = new System.Windows.Forms.MenuItem();
             this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuItem13 = new System.Windows.Forms.MenuItem();
-            this.menuItem14 = new System.Windows.Forms.MenuItem();
-            this.menuItem15 = new System.Windows.Forms.MenuItem();
-            this.menuItem16 = new System.Windows.Forms.MenuItem();
-            this.menuItem17 = new System.Windows.Forms.MenuItem();
-            this.menuItem18 = new System.Windows.Forms.MenuItem();
+            this.menuFrameSkip0 = new System.Windows.Forms.MenuItem();
+            this.menuFrameSkip1 = new System.Windows.Forms.MenuItem();
+            this.menuFrameSkip2 = new System.Windows.Forms.MenuItem();
+            this.menuFrameSkip3 = new System.Windows.Forms.MenuItem();
+            this.menuFrameSkip4 = new System.Windows.Forms.MenuItem();
             this.menuItem19 = new System.Windows.Forms.MenuItem();
             this.menuSize1 = new System.Windows.Forms.MenuItem();
             this.menuSize2 = new System.Windows.Forms.MenuItem();
@@ -76,8 +76,7 @@ namespace nanoboy
             this.menuSize4 = new System.Windows.Forms.MenuItem();
             this.menuSizeFull = new System.Windows.Forms.MenuItem();
             this.menuItem20 = new System.Windows.Forms.MenuItem();
-            this.menuPreserveAspect = new System.Windows.Forms.MenuItem();
-            this.menuItem5 = new System.Windows.Forms.MenuItem();
+            this.menuControls = new System.Windows.Forms.MenuItem();
             this.menuItem21 = new System.Windows.Forms.MenuItem();
             this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuAbout = new System.Windows.Forms.MenuItem();
@@ -125,50 +124,55 @@ namespace nanoboy
             this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem2,
             this.menuItem3,
-            this.menuItem5});
+            this.menuControls});
             this.menuItem1.Text = "Options";
             // 
             // menuItem2
             // 
             this.menuItem2.Index = 0;
             this.menuItem2.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItem6,
+            this.menuAudioOn,
             this.menuItem7,
-            this.menuItem8,
-            this.menuItem9,
-            this.menuItem10,
-            this.menuItem11});
+            this.menuAudioC1,
+            this.menuAudioC2,
+            this.menuAudioC3,
+            this.menuAudioC4});
             this.menuItem2.Text = "Audio";
             // 
-            // menuItem6
+            // menuAudioOn
             // 
-            this.menuItem6.Index = 0;
-            this.menuItem6.Text = "On";
+            this.menuAudioOn.Index = 0;
+            this.menuAudioOn.Text = "On";
+            this.menuAudioOn.Click += new System.EventHandler(this.menuAudioOn_Click);
             // 
             // menuItem7
             // 
             this.menuItem7.Index = 1;
             this.menuItem7.Text = "-";
             // 
-            // menuItem8
+            // menuAudioC1
             // 
-            this.menuItem8.Index = 2;
-            this.menuItem8.Text = "Channel 1";
+            this.menuAudioC1.Index = 2;
+            this.menuAudioC1.Text = "Channel 1";
+            this.menuAudioC1.Click += new System.EventHandler(this.menuAudioC1_Click);
             // 
-            // menuItem9
+            // menuAudioC2
             // 
-            this.menuItem9.Index = 3;
-            this.menuItem9.Text = "Channel 2";
+            this.menuAudioC2.Index = 3;
+            this.menuAudioC2.Text = "Channel 2";
+            this.menuAudioC2.Click += new System.EventHandler(this.menuAudioC2_Click);
             // 
-            // menuItem10
+            // menuAudioC3
             // 
-            this.menuItem10.Index = 4;
-            this.menuItem10.Text = "Channel 3";
+            this.menuAudioC3.Index = 4;
+            this.menuAudioC3.Text = "Channel 3";
+            this.menuAudioC3.Click += new System.EventHandler(this.menuAudioC3_Click);
             // 
-            // menuItem11
+            // menuAudioC4
             // 
-            this.menuItem11.Index = 5;
-            this.menuItem11.Text = "Channel 4";
+            this.menuAudioC4.Index = 5;
+            this.menuAudioC4.Text = "Channel 4";
+            this.menuAudioC4.Click += new System.EventHandler(this.menuAudioC4_Click);
             // 
             // menuItem3
             // 
@@ -182,37 +186,47 @@ namespace nanoboy
             // 
             this.menuItem13.Index = 0;
             this.menuItem13.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItem14,
-            this.menuItem15,
-            this.menuItem16,
-            this.menuItem17,
-            this.menuItem18});
+            this.menuFrameSkip0,
+            this.menuFrameSkip1,
+            this.menuFrameSkip2,
+            this.menuFrameSkip3,
+            this.menuFrameSkip4});
             this.menuItem13.Text = "Frameskip";
             // 
-            // menuItem14
+            // menuFrameSkip0
             // 
-            this.menuItem14.Index = 0;
-            this.menuItem14.Text = "None";
+            this.menuFrameSkip0.Index = 0;
+            this.menuFrameSkip0.RadioCheck = true;
+            this.menuFrameSkip0.Text = "None";
+            this.menuFrameSkip0.Click += new System.EventHandler(this.menuFrameSkip0_Click);
             // 
-            // menuItem15
+            // menuFrameSkip1
             // 
-            this.menuItem15.Index = 1;
-            this.menuItem15.Text = "1";
+            this.menuFrameSkip1.Index = 1;
+            this.menuFrameSkip1.RadioCheck = true;
+            this.menuFrameSkip1.Text = "1";
+            this.menuFrameSkip1.Click += new System.EventHandler(this.menuFrameSkip1_Click);
             // 
-            // menuItem16
+            // menuFrameSkip2
             // 
-            this.menuItem16.Index = 2;
-            this.menuItem16.Text = "2";
+            this.menuFrameSkip2.Index = 2;
+            this.menuFrameSkip2.RadioCheck = true;
+            this.menuFrameSkip2.Text = "2";
+            this.menuFrameSkip2.Click += new System.EventHandler(this.menuFrameSkip2_Click);
             // 
-            // menuItem17
+            // menuFrameSkip3
             // 
-            this.menuItem17.Index = 3;
-            this.menuItem17.Text = "3";
+            this.menuFrameSkip3.Index = 3;
+            this.menuFrameSkip3.RadioCheck = true;
+            this.menuFrameSkip3.Text = "3";
+            this.menuFrameSkip3.Click += new System.EventHandler(this.menuFrameSkip3_Click);
             // 
-            // menuItem18
+            // menuFrameSkip4
             // 
-            this.menuItem18.Index = 4;
-            this.menuItem18.Text = "4";
+            this.menuFrameSkip4.Index = 4;
+            this.menuFrameSkip4.RadioCheck = true;
+            this.menuFrameSkip4.Text = "4";
+            this.menuFrameSkip4.Click += new System.EventHandler(this.menuFrameSkip4_Click);
             // 
             // menuItem19
             // 
@@ -223,37 +237,41 @@ namespace nanoboy
             this.menuSize3,
             this.menuSize4,
             this.menuSizeFull,
-            this.menuItem20,
-            this.menuPreserveAspect});
+            this.menuItem20});
             this.menuItem19.Text = "Size";
             // 
             // menuSize1
             // 
             this.menuSize1.Index = 0;
+            this.menuSize1.RadioCheck = true;
             this.menuSize1.Text = "1x";
             this.menuSize1.Click += new System.EventHandler(this.menuSize1_Click);
             // 
             // menuSize2
             // 
             this.menuSize2.Index = 1;
+            this.menuSize2.RadioCheck = true;
             this.menuSize2.Text = "2x";
             this.menuSize2.Click += new System.EventHandler(this.menuSize2_Click);
             // 
             // menuSize3
             // 
             this.menuSize3.Index = 2;
+            this.menuSize3.RadioCheck = true;
             this.menuSize3.Text = "3x";
             this.menuSize3.Click += new System.EventHandler(this.menuSize3_Click);
             // 
             // menuSize4
             // 
             this.menuSize4.Index = 3;
+            this.menuSize4.RadioCheck = true;
             this.menuSize4.Text = "4x";
             this.menuSize4.Click += new System.EventHandler(this.menuSize4_Click);
             // 
             // menuSizeFull
             // 
             this.menuSizeFull.Index = 4;
+            this.menuSizeFull.RadioCheck = true;
             this.menuSizeFull.Text = "Fullscreen";
             this.menuSizeFull.Click += new System.EventHandler(this.menuSizeFull_Click);
             // 
@@ -262,16 +280,11 @@ namespace nanoboy
             this.menuItem20.Index = 5;
             this.menuItem20.Text = "-";
             // 
-            // menuPreserveAspect
+            // menuControls
             // 
-            this.menuPreserveAspect.Index = 6;
-            this.menuPreserveAspect.Text = "Preserve Aspect Ratio";
-            this.menuPreserveAspect.Click += new System.EventHandler(this.menuPreserveAspect_Click);
-            // 
-            // menuItem5
-            // 
-            this.menuItem5.Index = 2;
-            this.menuItem5.Text = "Controls";
+            this.menuControls.Index = 2;
+            this.menuControls.Text = "Controls";
+            this.menuControls.Click += new System.EventHandler(this.menuControls_Click);
             // 
             // menuItem21
             // 
@@ -323,7 +336,7 @@ namespace nanoboy
             this.Menu = this.nanoMenu;
             this.Name = "frmNano";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Nanoboy v0.9";
+            this.Text = "Nanoboy v1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmNano_FormClosing);
             this.ResumeLayout(false);
 
@@ -341,20 +354,20 @@ namespace nanoboy
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem menuItem2;
         private System.Windows.Forms.MenuItem menuItem3;
-        private System.Windows.Forms.MenuItem menuItem5;
-        private System.Windows.Forms.MenuItem menuItem6;
+        private System.Windows.Forms.MenuItem menuControls;
+        private System.Windows.Forms.MenuItem menuAudioOn;
         private System.Windows.Forms.MenuItem menuItem7;
-        private System.Windows.Forms.MenuItem menuItem8;
-        private System.Windows.Forms.MenuItem menuItem9;
-        private System.Windows.Forms.MenuItem menuItem10;
-        private System.Windows.Forms.MenuItem menuItem11;
+        private System.Windows.Forms.MenuItem menuAudioC1;
+        private System.Windows.Forms.MenuItem menuAudioC2;
+        private System.Windows.Forms.MenuItem menuAudioC3;
+        private System.Windows.Forms.MenuItem menuAudioC4;
         private System.Windows.Forms.MenuItem menuItem12;
         private System.Windows.Forms.MenuItem menuItem13;
-        private System.Windows.Forms.MenuItem menuItem14;
-        private System.Windows.Forms.MenuItem menuItem15;
-        private System.Windows.Forms.MenuItem menuItem16;
-        private System.Windows.Forms.MenuItem menuItem17;
-        private System.Windows.Forms.MenuItem menuItem18;
+        private System.Windows.Forms.MenuItem menuFrameSkip0;
+        private System.Windows.Forms.MenuItem menuFrameSkip1;
+        private System.Windows.Forms.MenuItem menuFrameSkip2;
+        private System.Windows.Forms.MenuItem menuFrameSkip3;
+        private System.Windows.Forms.MenuItem menuFrameSkip4;
         private System.Windows.Forms.MenuItem menuItem19;
         private System.Windows.Forms.MenuItem menuSize1;
         private System.Windows.Forms.MenuItem menuSize2;
@@ -362,7 +375,6 @@ namespace nanoboy
         private System.Windows.Forms.MenuItem menuSize4;
         private System.Windows.Forms.MenuItem menuSizeFull;
         private System.Windows.Forms.MenuItem menuItem20;
-        private System.Windows.Forms.MenuItem menuPreserveAspect;
         private OpenTK.GLControl gameView;
         private System.Windows.Forms.MenuItem menuItem21;
     }

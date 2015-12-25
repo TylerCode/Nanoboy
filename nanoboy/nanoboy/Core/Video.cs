@@ -39,6 +39,7 @@ namespace nanoboy.Core
         }
 
         public bool FrameReady { get; set; }
+        public int Frameskip { get; set; }
 
         // #######################
         // #      Registers      #
@@ -100,6 +101,8 @@ namespace nanoboy.Core
         private Color[] monochromepalette;
         private uint[] frame;
         private bool coincidenceinterrupttriggered;
+        private int framecounter;
+        private bool updaterequired;
 
         private struct SpriteEntry
         {
@@ -159,8 +162,14 @@ namespace nanoboy.Core
                         }
                         ModeFlag = 0;
                         clock = 0;
+
                         // Render
-                        RenderLine();
+                        if (Frameskip == 0 || framecounter == Frameskip) {
+                            RenderLine();
+                            updaterequired = true;
+                        } else {
+                            updaterequired = false;
+                        }
                     }
                     break;
                 // HBlank
@@ -172,8 +181,10 @@ namespace nanoboy.Core
                         if (LY == 144) {
                             // Enter VBlank
                             ModeFlag = 1;
+
                             // Eventually output?
-                            FrameReady = true;
+                            FrameReady = updaterequired;
+                            framecounter = (framecounter + 1) % (Frameskip + 1);
                         } else {
                             // Next scanline
                             ModeFlag = 2;

@@ -31,6 +31,9 @@ namespace nanoboy.Core.Audio
             Increase = 1
         }
 
+        // Enables or disables the channel
+        public bool Enabled { get; set; }
+
         // Noise generation
         public int ClockFrequency { get; set; } // s
         public bool CounterStep { get; set; } // 0 = 15 bits, 1 = 7 bits
@@ -49,10 +52,12 @@ namespace nanoboy.Core.Audio
         public EnvelopeMode EnvelopeDirection { get; set; }
         public int EnvelopeSweep
         {
-            get {
+            get
+            {
                 return envelopesweep;
             }
-            set {
+            set
+            {
                 envelopesweep = value;
                 envelopecycles = 0;
             }
@@ -60,10 +65,12 @@ namespace nanoboy.Core.Audio
         private int envelopesweep;
         public int Volume
         {
-            get {
+            get
+            {
                 return lastwrittenvolume;
             }
-            set {
+            set
+            {
                 lastwrittenvolume = value;
                 currentvolume = value;
             }
@@ -85,6 +92,7 @@ namespace nanoboy.Core.Audio
         public NoiseChannel()
         {
             buffer = new List<int>();
+            Enabled = true;
         }
 
         public float Next(int samplerate)

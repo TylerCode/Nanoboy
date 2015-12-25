@@ -24,6 +24,10 @@ namespace nanoboy.Core.Audio
 {
     public sealed class WaveChannel : ISoundChannel
     {
+        // Enables or disables the channel
+        public bool Enabled { get; set; }
+
+        // Sampledata 
         public byte[] WaveRAM { get; set; }
         
         // Frequency
@@ -46,6 +50,7 @@ namespace nanoboy.Core.Audio
 
         public WaveChannel()
         {
+            Enabled = true;
             WaveRAM = new byte[0x20];
         }
 

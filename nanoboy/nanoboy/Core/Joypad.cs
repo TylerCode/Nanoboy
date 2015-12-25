@@ -26,6 +26,7 @@ namespace nanoboy.Core
     /// </summary>
     public class Joypad
     {
+        public IEmulatorSettings Settings { get; set; }
         public bool SelectButtonKeys { get; set; }
         public bool SelectDirectionKeys { get; set; }
         public bool KeyDown { get; set; }
@@ -53,35 +54,27 @@ namespace nanoboy.Core
 
         public void Set(Keys key, bool status)
         {
-            switch (key) 
-            {
-                case Keys.Shift:
-                    KeySelect = status;
-                    break;
-                case Keys.Enter:
-                    KeyStart = status;
-                    break;
-                case Keys.Up:
-                    KeyUp = status;
-                    break;
-                case Keys.Down:
-                    KeyDown = status;
-                    break;
-                case Keys.Left:
-                    KeyLeft = status;
-                    break;
-                case Keys.Right:
-                    KeyRight = status;
-                    break;
-                case Keys.X:
-                    KeyB = status;
-                    break;
-                case Keys.Y:
+            if (Settings != null) {
+                if (key == Settings.KeyA) {
                     KeyA = status;
-                    break;
-            }
-            if (!status) {
-                interrupt.IF |= 16;
+                } else if (key == Settings.KeyB) {
+                    KeyB = status;
+                } else if (key == Settings.KeyStart) {
+                    KeyStart = status;
+                } else if (key == Settings.KeySelect) {
+                    KeySelect = status;
+                } else if (key == Settings.KeyUp) {
+                    KeyUp = status;
+                } else if (key == Settings.KeyDown) {
+                    KeyDown = status;
+                } else if (key == Settings.KeyLeft) {
+                    KeyLeft = status;
+                } else if (key == Settings.KeyRight) {
+                    KeyRight = status;
+                }
+                if (!status) {
+                    interrupt.IF |= 16;
+                }
             }
         }
 

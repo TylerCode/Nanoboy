@@ -39,6 +39,7 @@ namespace nanoboy.Core.Audio
         public QuadChannel Channel2 { get; set; }
         public WaveChannel Channel3 { get; set; }
         public NoiseChannel Channel4 { get; set; }
+        public bool Enabled { get; set; }
         private int ticks;
         private int samples;
         private List<float> samplebuffer;
@@ -49,6 +50,7 @@ namespace nanoboy.Core.Audio
             Channel2 = new QuadChannel();
             Channel3 = new WaveChannel();
             Channel4 = new NoiseChannel();
+            Enabled = true;
             ticks = 0;
             samples = 0;
             samplebuffer = new List<float>();
@@ -62,19 +64,21 @@ namespace nanoboy.Core.Audio
             Channel3.Tick();
             Channel4.Tick();
 
-            // At a frequency of 44,1khz read samples
+            // At a frequency of 44,1khz read samples from enabled channels
             if (ticks++ == 95) {
-                float sample = Channel1.Next(44100) +
-                               Channel2.Next(44100) +
-                               Channel3.Next(44100) +
-                               Channel4.Next(44100);
-                samplebuffer.Add(sample);
-                if (samples++ == 2048) {
-                    if (AudioAvailable != null) {
-                        AudioAvailable(this, new AudioAvailableEventArgs(samplebuffer.ToArray()));
+                if (Enabled) {
+                    float sample = (Channel1.Enabled ? Channel1.Next(44100) : 0) +
+                                   (Channel2.Enabled ? Channel2.Next(44100) : 0) +
+                                   (Channel3.Enabled ? Channel3.Next(44100) : 0) +
+                                   (Channel4.Enabled ? Channel4.Next(44100) : 0);
+                    samplebuffer.Add(sample);
+                    if (samples++ == 3528) {
+                        if (AudioAvailable != null) {
+                            AudioAvailable(this, new AudioAvailableEventArgs(samplebuffer.ToArray()));
+                        }
+                        samplebuffer.Clear();
+                        samples = 0;
                     }
-                    samplebuffer.Clear();
-                    samples = 0;
                 }
                 ticks = 0;
             }

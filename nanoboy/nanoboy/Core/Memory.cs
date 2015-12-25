@@ -148,6 +148,10 @@ namespace nanoboy.Core
                         return (byte)(Audio.Channel3.OutputLevel << 5);
                     case 0x1E: // NR33 Channel 3 Frequency hi
                         return (byte)(Audio.Channel3.StopOnLengthExpired ? 0x40 : 0x00);
+                    case 0x20:
+                    case 0x21:
+                    case 0x22:
+                    case 0x23: throw new NotImplementedException();
                     // FF30-FF3F Wave Pattern RAM
                     case 0x30:
                     case 0x31:

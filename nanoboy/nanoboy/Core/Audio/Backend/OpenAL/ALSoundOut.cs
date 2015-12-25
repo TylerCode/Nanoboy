@@ -43,7 +43,7 @@ namespace nanoboy.Core.Audio.Backend.OpenAL
             audio.AudioAvailable += audio_AudioAvailable;
             audioqueue = new Queue<short[]>();
             audiothread = new Thread(StreamingThread);
-            audiothread.Priority = ThreadPriority.AboveNormal;
+            audiothread.Priority = ThreadPriority.Highest;
             audiothread.Start();
         }
 
@@ -62,9 +62,9 @@ namespace nanoboy.Core.Audio.Backend.OpenAL
                 buffer[i] = ConvertFloatTo16Bit(e.Buffer[i] * Amplitude);
             }
 
-            // Flush the queue if the lag is bigger than 100ms (approx. 2 buffers pending)
-            if (audioqueue.Count > 2) {
-                audioqueue.Dequeue();
+            // Flush the queue if there are more than 20 buffers pending..
+            if (audioqueue.Count > 20) {
+                audioqueue.Clear();
             }
 
             // Pass it to the audio queue
@@ -75,7 +75,7 @@ namespace nanoboy.Core.Audio.Backend.OpenAL
         {
             short[] data;
             if (audioqueue.Count == 0) {
-                data = new short[2048];
+                data = new short[3528];
             } else {
                 data = audioqueue.Dequeue();
             }
@@ -86,10 +86,13 @@ namespace nanoboy.Core.Audio.Backend.OpenAL
         {
             audiocontext = new AudioContext();
             source = AL.GenSource();
-            buffers = AL.GenBuffers(2);
+            buffers = AL.GenBuffers(10);
             AL.Source(source, ALSourceb.SourceRelative, true);
-            Stream(buffers[0]);
-            Stream(buffers[1]);
+
+            for (int i = 0; i < 10; i++) {
+                Stream(buffers[i]);
+            }
+
             AL.SourceQueueBuffers(source, 2, buffers);
             AL.SourcePlay(source);
 

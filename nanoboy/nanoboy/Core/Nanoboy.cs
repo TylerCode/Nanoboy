@@ -49,7 +49,7 @@ namespace nanoboy.Core
         {
             int cyclesleft = 0;
             for (int i = 0; i < 70224; i++) {
-                for (int j = 0; j < 4 * (Cpu.IsDoubleSpeed ? 2 : 1); j++) {
+                for (int j = 0; j < 4 /** (Cpu.IsDoubleSpeed ? 2 : 1)*/; j++) {
                     if (cyclesleft == 0) {
                         cyclesleft = Cpu.Tick();
                     }
@@ -109,6 +109,17 @@ namespace nanoboy.Core
             Cpu.Memory.WriteByte(0xFF4A, 0x00); // WY
             Cpu.Memory.WriteByte(0xFF4B, 0x00); // WX
             Cpu.Memory.WriteByte(0xFFFF, 0x00); // IE
+        }
+
+        public void SetSettings(IEmulatorSettings settings)
+        {
+            memory.Audio.Channel1.Enabled = settings.Channel1Enable;
+            memory.Audio.Channel2.Enabled = settings.Channel2Enable;
+            memory.Audio.Channel3.Enabled = settings.Channel3Enable;
+            memory.Audio.Channel4.Enabled = settings.Channel4Enable;
+            memory.Audio.Enabled = settings.AudioEnable;
+            memory.Video.Frameskip = settings.Frameskip;
+            memory.Joypad.Settings = settings;
         }
 
         public Subscription<CPUStatusUpdate> Debug(IObserver<CPUStatusUpdate> debugger)

@@ -11,6 +11,21 @@
     <AssemblyName>nanoboy</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,12 +68,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NAudio">
-      <HintPath>..\..\..\..\..\Downloads\NAudio-Release\NAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio.WindowsMediaFormat">
-      <HintPath>..\..\..\..\..\Downloads\NAudio-Release\NAudio.WindowsMediaFormat.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\OpenTK\1.1\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
@@ -87,6 +96,7 @@
     <Compile Include="Core\CPU.cs" />
     <Compile Include="Core\Debugger.cs" />
     <Compile Include="Core\Disassembler.cs" />
+    <Compile Include="Core\IEmulatorSettings.cs" />
     <Compile Include="Core\HDMA.cs" />
     <Compile Include="Core\IMemoryDevice.cs" />
     <Compile Include="Core\Interrupt.cs" />
@@ -102,6 +112,12 @@
     <Compile Include="frmAbout.Designer.cs">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmControls.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmControls.Designer.cs">
+      <DependentUpon>frmControls.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmNano.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,11 +125,15 @@
       <DependentUpon>frmNano.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Memory.cs" />
+    <Compile Include="NanoboySettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\ROM.cs" />
     <EmbeddedResource Include="frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmControls.resx">
+      <DependentUpon>frmControls.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmNano.resx">
       <DependentUpon>frmNano.cs</DependentUpon>
@@ -146,7 +166,18 @@
     <None Include="Resources\128x128.png" />
     <None Include="Resources\close.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
