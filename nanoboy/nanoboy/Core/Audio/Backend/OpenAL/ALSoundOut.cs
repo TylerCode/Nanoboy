@@ -28,7 +28,7 @@ using System.IO;
 
 namespace nanoboy.Core.Audio.Backend.OpenAL
 {
-    public sealed class ALSoundOut
+    public sealed class ALSoundOut : IDisposable
     {
         public float Amplitude { get; set; }
         private int source;
@@ -49,7 +49,12 @@ namespace nanoboy.Core.Audio.Backend.OpenAL
 
         ~ALSoundOut()
         {
-            audiothread.Suspend();
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            audiothread.Abort();
             audiocontext.Dispose();
         }
 
