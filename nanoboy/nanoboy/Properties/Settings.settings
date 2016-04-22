@@ -47,5 +47,8 @@
     <Setting Name="KeyRight" Type="System.Windows.Forms.Keys" Scope="User">
       <Value Profile="(Default)">Right</Value>
     </Setting>
+    <Setting Name="SampleRate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

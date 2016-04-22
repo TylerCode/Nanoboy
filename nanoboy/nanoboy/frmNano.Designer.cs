@@ -62,6 +62,11 @@ namespace nanoboy
             this.menuAudioC2 = new System.Windows.Forms.MenuItem();
             this.menuAudioC3 = new System.Windows.Forms.MenuItem();
             this.menuAudioC4 = new System.Windows.Forms.MenuItem();
+            this.menuItem5 = new System.Windows.Forms.MenuItem();
+            this.menuAudioQ1 = new System.Windows.Forms.MenuItem();
+            this.menuAudioQ2 = new System.Windows.Forms.MenuItem();
+            this.menuAudioQ3 = new System.Windows.Forms.MenuItem();
+            this.menuAudioQ4 = new System.Windows.Forms.MenuItem();
             this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuItem13 = new System.Windows.Forms.MenuItem();
             this.menuFrameSkip0 = new System.Windows.Forms.MenuItem();
@@ -136,7 +141,8 @@ namespace nanoboy
             this.menuAudioC1,
             this.menuAudioC2,
             this.menuAudioC3,
-            this.menuAudioC4});
+            this.menuAudioC4,
+            this.menuItem5});
             this.menuItem2.Text = "Audio";
             // 
             // menuAudioOn
@@ -173,6 +179,40 @@ namespace nanoboy
             this.menuAudioC4.Index = 5;
             this.menuAudioC4.Text = "Channel 4";
             this.menuAudioC4.Click += new System.EventHandler(this.menuAudioC4_Click);
+            // 
+            // menuItem5
+            // 
+            this.menuItem5.Index = 6;
+            this.menuItem5.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuAudioQ1,
+            this.menuAudioQ2,
+            this.menuAudioQ3,
+            this.menuAudioQ4});
+            this.menuItem5.Text = "Quality";
+            // 
+            // menuAudioQ1
+            // 
+            this.menuAudioQ1.Index = 0;
+            this.menuAudioQ1.Text = "8192 Hz";
+            this.menuAudioQ1.Click += new System.EventHandler(this.menuAudioQ1_Click);
+            // 
+            // menuAudioQ2
+            // 
+            this.menuAudioQ2.Index = 1;
+            this.menuAudioQ2.Text = "16384 Hz";
+            this.menuAudioQ2.Click += new System.EventHandler(this.menuAudioQ2_Click);
+            // 
+            // menuAudioQ3
+            // 
+            this.menuAudioQ3.Index = 2;
+            this.menuAudioQ3.Text = "32768 Hz";
+            this.menuAudioQ3.Click += new System.EventHandler(this.menuAudioQ3_Click);
+            // 
+            // menuAudioQ4
+            // 
+            this.menuAudioQ4.Index = 3;
+            this.menuAudioQ4.Text = "44100 Hz";
+            this.menuAudioQ4.Click += new System.EventHandler(this.menuAudioQ4_Click);
             // 
             // menuItem3
             // 
@@ -377,5 +417,10 @@ namespace nanoboy
         private System.Windows.Forms.MenuItem menuItem20;
         private OpenTK.GLControl gameView;
         private System.Windows.Forms.MenuItem menuItem21;
+        private System.Windows.Forms.MenuItem menuAudioQ1;
+        private System.Windows.Forms.MenuItem menuAudioQ2;
+        private System.Windows.Forms.MenuItem menuAudioQ3;
+        private System.Windows.Forms.MenuItem menuAudioQ4;
+        private System.Windows.Forms.MenuItem menuItem5;
     }
 }

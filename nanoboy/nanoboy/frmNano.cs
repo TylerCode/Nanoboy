@@ -40,6 +40,7 @@ namespace nanoboy
         private bool loadedgl;
         private int textureid = -1;
         private bool speedup = false;
+        private bool glerror = false;
 
         public frmNano()
         {
@@ -199,6 +200,30 @@ namespace nanoboy
             frmControls controls = new frmControls(settings);
             controls.ShowDialog();
         }
+
+        private void menuAudioQ1_Click(object sender, EventArgs e)
+        {
+            settings.SampleRate = 0;
+            LoadConfiguration();
+        }
+
+        private void menuAudioQ2_Click(object sender, EventArgs e)
+        {
+            settings.SampleRate = 1;
+            LoadConfiguration();
+        }
+
+        private void menuAudioQ3_Click(object sender, EventArgs e)
+        {
+            settings.SampleRate = 2;
+            LoadConfiguration();
+        }
+
+        private void menuAudioQ4_Click(object sender, EventArgs e)
+        {
+            settings.SampleRate = 3;
+            LoadConfiguration();
+        }
         #endregion
 
         #region "Update"
@@ -251,37 +276,48 @@ namespace nanoboy
         private void gameView_Paint(object sender, PaintEventArgs e)
         {
             if (loadedgl && nano != null) {
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+                if (!glerror) {
+                    GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-                GL.MatrixMode(MatrixMode.Modelview);
-                GL.LoadIdentity();
-                textureid = TextureFromArray(nano.Image, textureid);
-                GL.BindTexture(TextureTarget.Texture2D, textureid);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-                GL.Begin(PrimitiveType.Quads);
-                {
-                    GL.TexCoord2(0f, 0f);
-                    GL.Vertex2(0f, 0f);
-                    GL.TexCoord2(1f, 0f);
-                    GL.Vertex2(gameView.Width, 0f);
-                    GL.TexCoord2(1f, 1f);
-                    GL.Vertex2(gameView.Width, gameView.Height);
-                    GL.TexCoord2(0f, 1f);
-                    GL.Vertex2(0f, gameView.Height);
+                    GL.MatrixMode(MatrixMode.Modelview);
+                    GL.LoadIdentity();
+                    textureid = TextureFromArray(nano.Image, textureid);
+                    GL.BindTexture(TextureTarget.Texture2D, textureid);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+                    GL.Begin(PrimitiveType.Quads);
+                    {
+                        GL.TexCoord2(0f, 0f);
+                        GL.Vertex2(0f, 0f);
+                        GL.TexCoord2(1f, 0f);
+                        GL.Vertex2(gameView.Width, 0f);
+                        GL.TexCoord2(1f, 1f);
+                        GL.Vertex2(gameView.Width, gameView.Height);
+                        GL.TexCoord2(0f, 1f);
+                        GL.Vertex2(0f, gameView.Height);
+                    }
+                    GL.End();
+
+                    gameView.SwapBuffers();
+                } else {
+                    Bitmap bmp = new Bitmap(160, 140, 160 * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, nano.Image);
+                    e.Graphics.DrawImage((Image)bmp, new Rectangle(0, 0, gameView.Width, gameView.Height), new Rectangle(0, 0, 160, 140), GraphicsUnit.Pixel);
                 }
-                GL.End();
-
-                gameView.SwapBuffers();
             }
         }
 
-        public static int TextureFromArray(IntPtr arrayptr, int texturexid = -1)
+        public int TextureFromArray(IntPtr arrayptr, int texturexid = -1)
         {
             int id = texturexid == -1 ? GL.GenTexture() : texturexid;
             GL.BindTexture(TextureTarget.Texture2D, id);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, 160, 144, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, arrayptr);
+
+            /* On some systems InvalidValue gets thrown. Fallback to GDI then */
+            if (GL.GetError() != ErrorCode.NoError) {
+                glerror = true;
+                MessageBox.Show("GL.TexImage2D: Failed to update texture data.\nFalling back to GDI.", "Nanoboy", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             return id;
         }
 
@@ -341,6 +377,10 @@ namespace nanoboy
             menuAudioC2.Checked = settings.Channel2Enable;
             menuAudioC3.Checked = settings.Channel3Enable;
             menuAudioC4.Checked = settings.Channel4Enable;
+            menuAudioQ1.Checked = settings.SampleRate == 0;
+            menuAudioQ2.Checked = settings.SampleRate == 1;
+            menuAudioQ3.Checked = settings.SampleRate == 2;
+            menuAudioQ4.Checked = settings.SampleRate == 3;
             menuAudioOn.Checked = settings.AudioEnable;
             menuSize1.Checked = settings.VideoScaleFactor == 1;
             menuSize2.Checked = settings.VideoScaleFactor == 2;

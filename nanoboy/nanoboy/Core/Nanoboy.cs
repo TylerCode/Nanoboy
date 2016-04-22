@@ -35,6 +35,7 @@ namespace nanoboy.Core
         }
         public CPU Cpu { get; set; }
         private Memory memory;
+        private static int[] samplerates = new int[] { 8192, 16384, 32768, 44100 };
 
         public Nanoboy(ROM rom)
         {
@@ -113,6 +114,7 @@ namespace nanoboy.Core
 
         public void SetSettings(IEmulatorSettings settings)
         {
+            memory.Audio.SampleRate = samplerates[settings.SampleRate];
             memory.Audio.Channel1.Enabled = settings.Channel1Enable;
             memory.Audio.Channel2.Enabled = settings.Channel2Enable;
             memory.Audio.Channel3.Enabled = settings.Channel3Enable;

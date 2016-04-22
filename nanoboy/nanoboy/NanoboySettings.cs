@@ -115,6 +115,12 @@ namespace nanoboy
             set { nanoboy.Properties.Settings.Default.KeyRight = value; }
         }
 
+        public int SampleRate
+        {
+            get { return nanoboy.Properties.Settings.Default.SampleRate; }
+            set { nanoboy.Properties.Settings.Default.SampleRate = value; }
+        }
+
         private void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             nanoboy.Properties.Settings.Default.Save();

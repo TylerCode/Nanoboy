@@ -38,5 +38,6 @@ namespace nanoboy.Core
         Keys KeyDown { get; set; }
         Keys KeyLeft { get; set; }
         Keys KeyRight { get; set; }
+        int SampleRate { get; set; }
     }
 }

@@ -25,10 +25,12 @@ namespace nanoboy.Core.Audio
     public sealed class AudioAvailableEventArgs : EventArgs
     {
         public float[] Buffer { get; set; }
+        public int SampleRate { get; set; }
 
-        public AudioAvailableEventArgs(float[] buffer)
+        public AudioAvailableEventArgs(float[] buffer, int rate)
         {
             Buffer = buffer;
+            SampleRate = rate;
         }
     }
 
@@ -39,6 +41,8 @@ namespace nanoboy.Core.Audio
         public QuadChannel Channel2 { get; set; }
         public WaveChannel Channel3 { get; set; }
         public NoiseChannel Channel4 { get; set; }
+        public int SampleRate { get; set; }
+        public int BufferSize { get; set; }
         public bool Enabled { get; set; }
         private int ticks;
         private int samples;
@@ -50,6 +54,8 @@ namespace nanoboy.Core.Audio
             Channel2 = new QuadChannel();
             Channel3 = new WaveChannel();
             Channel4 = new NoiseChannel();
+            SampleRate = 44100;
+            BufferSize = 1024;
             Enabled = true;
             ticks = 0;
             samples = 0;
@@ -64,17 +70,17 @@ namespace nanoboy.Core.Audio
             Channel3.Tick();
             Channel4.Tick();
 
-            // At a frequency of 44,1khz read samples from enabled channels
-            if (ticks++ == 95) {
+            // At a given sample rate read samples from enabled channels
+            if (ticks++ == 4057200 / SampleRate) {
                 if (Enabled) {
-                    float sample = (Channel1.Enabled ? Channel1.Next(44100) : 0) +
-                                   (Channel2.Enabled ? Channel2.Next(44100) : 0) +
-                                   (Channel3.Enabled ? Channel3.Next(44100) : 0) +
-                                   (Channel4.Enabled ? Channel4.Next(44100) : 0);
+                    float sample = (Channel1.Enabled ? Channel1.Next(SampleRate) : 0) +
+                                   (Channel2.Enabled ? Channel2.Next(SampleRate) : 0) +
+                                   (Channel3.Enabled ? Channel3.Next(SampleRate) : 0) +
+                                   (Channel4.Enabled ? Channel4.Next(SampleRate) : 0);
                     samplebuffer.Add(sample);
-                    if (samples++ == 3528) {
+                    if (samples++ == BufferSize) {
                         if (AudioAvailable != null) {
-                            AudioAvailable(this, new AudioAvailableEventArgs(samplebuffer.ToArray()));
+                            AudioAvailable(this, new AudioAvailableEventArgs(samplebuffer.ToArray(), SampleRate));
                         }
                         samplebuffer.Clear();
                         samples = 0;
