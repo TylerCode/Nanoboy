@@ -30,10 +30,10 @@
       <Value Profile="(Default)">X</Value>
     </Setting>
     <Setting Name="KeyStart" Type="System.Windows.Forms.Keys" Scope="User">
-      <Value Profile="(Default)">Eingabetaste</Value>
+      <Value Profile="(Default)">C</Value>
     </Setting>
     <Setting Name="KeySelect" Type="System.Windows.Forms.Keys" Scope="User">
-      <Value Profile="(Default)">Umschalttaste+None</Value>
+      <Value Profile="(Default)">V</Value>
     </Setting>
     <Setting Name="KeyUp" Type="System.Windows.Forms.Keys" Scope="User">
       <Value Profile="(Default)">Up</Value>

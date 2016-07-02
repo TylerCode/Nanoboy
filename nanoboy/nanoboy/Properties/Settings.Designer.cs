@@ -133,7 +133,7 @@ namespace nanoboy.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Eingabetaste")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C")]
         public global::System.Windows.Forms.Keys KeyStart {
             get {
                 return ((global::System.Windows.Forms.Keys)(this["KeyStart"]));
@@ -145,7 +145,7 @@ namespace nanoboy.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Umschalttaste+None")]
+        [global::System.Configuration.DefaultSettingValueAttribute("V")]
         public global::System.Windows.Forms.Keys KeySelect {
             get {
                 return ((global::System.Windows.Forms.Keys)(this["KeySelect"]));
