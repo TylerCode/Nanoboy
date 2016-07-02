@@ -23,8 +23,8 @@ namespace nanoboy.Core
 {
     public sealed class Interrupt
     {
-        public int IE { get; set; }
-        public int IF { get; set; }
+        public int IE;
+        public int IF;
         private CPU cpu;
 
         public Interrupt(CPU cpu)

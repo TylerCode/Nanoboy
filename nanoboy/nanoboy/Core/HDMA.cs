@@ -26,10 +26,10 @@ namespace nanoboy.Core
         // #######################
         // #      Registers      #
         // #######################
-        public int SourceAddress { get; set; }
-        public int DestinationAddress { get; set; }
-        public int Length { get; set; }
-        public bool IsHBlank { get; set; }
+        public int SourceAddress;
+        public int DestinationAddress;
+        public int Length;
+        public bool IsHBlank;
 
         private Memory memory;
         private bool inhblankdma;
@@ -47,6 +47,7 @@ namespace nanoboy.Core
             for (int i = 0; i < Length; i++) {
                 memory.WriteByte(0x8000 + DestinationAddress, memory.ReadByte(SourceAddress));
             }
+
             // 0xFF55 now contains 0xFF
             IsHBlank = true;
             Length = 0x7F;
@@ -59,10 +60,14 @@ namespace nanoboy.Core
                 hblankremaining = Length;
                 hblankprogress = 0;
             }
+
             for (int i = 0; i < 0x10; i++) {
-                memory.WriteByte(0x8000 + DestinationAddress + hblankprogress + i, memory.ReadByte(SourceAddress + hblankprogress + i));
+                memory.WriteByte(0x8000 + DestinationAddress + hblankprogress + i,
+                                 memory.ReadByte(SourceAddress + hblankprogress + i));
             }
+
             hblankprogress += 0x10;
+
             if (hblankprogress == hblankremaining) {
                 IsHBlank = false;
                 inhblankdma = false;

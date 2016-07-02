@@ -23,10 +23,10 @@ namespace nanoboy.Core
 {
     public sealed class Timer
     {
-        public int DIV { get; set; }
-        public int TIMA { get; set; }
-        public int TMA { get; set; }
-        public int TAC { get; set; }
+        public int DIV;
+        public int TIMA;
+        public int TMA;
+        public int TAC;
         private Interrupt interrupt;
         private int divcycles;
         private int timacycles;

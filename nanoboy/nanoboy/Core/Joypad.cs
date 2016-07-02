@@ -26,17 +26,17 @@ namespace nanoboy.Core
     /// </summary>
     public class Joypad
     {
-        public IEmulatorSettings Settings { get; set; }
-        public bool SelectButtonKeys { get; set; }
-        public bool SelectDirectionKeys { get; set; }
-        public bool KeyDown { get; set; }
-        public bool KeyUp { get; set; }
-        public bool KeyLeft { get; set; }
-        public bool KeyRight { get; set; }
-        public bool KeyA { get; set; }
-        public bool KeyB { get; set; }
-        public bool KeyStart { get; set; }
-        public bool KeySelect { get; set; }
+        public IEmulatorSettings Settings;
+        public bool SelectButtonKeys;
+        public bool SelectDirectionKeys;
+        public bool KeyDown;
+        public bool KeyUp;
+        public bool KeyLeft;
+        public bool KeyRight;
+        public bool KeyA;
+        public bool KeyB;
+        public bool KeyStart;
+        public bool KeySelect;
         private Interrupt interrupt;
 
         public Joypad(Interrupt interrupt)

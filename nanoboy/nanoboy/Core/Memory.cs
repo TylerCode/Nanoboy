@@ -25,11 +25,11 @@ namespace nanoboy.Core
 {
     public sealed class Memory : IMemoryDevice, IDisposable
     {
-        public Interrupt Interrupt { get; set; }
-        public Video Video { get; set; }
-        public Audio.Audio Audio { get; set; }
-        public Joypad Joypad { get; set; }
-        public Timer Timer { get; set; }
+        public Interrupt Interrupt;
+        public Video Video;
+        public Audio.Audio Audio;
+        public Joypad Joypad;
+        public Timer Timer;
         private CPU cpu;
         private HDMA hdma;
         private IMemoryDevice mbc;
