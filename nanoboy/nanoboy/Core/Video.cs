@@ -38,54 +38,54 @@ namespace nanoboy.Core
             }
         }
 
-        public bool FrameReady { get; set; }
-        public int Frameskip { get; set; }
+        public bool FrameReady;
+        public int Frameskip;
 
         // #######################
         // #      Registers      #
         // #######################
 
         // LCD Control 0xFF40
-        public bool LCDEnable { get; set; } // FALSE=OFF TRUE=ON
-        public bool WindowTileMapSelect { get; set; } // FALSE=9800-9BFF TRUE=9C00-9FFF
-        public bool WindowEnable { get; set; } // FALSE=OFF TRUE=ON
-        public bool TileDataSelect { get; set; } // FALSE=8800-97FF TRUE=8000-8FFF
-        public bool BackgroundTileMapSelect { get; set; } // FALSE=9800-9BFF TRUE=9C00-9FFF
-        public bool ObjectSize { get; set; } // FALSE=8x8 TRUE=8x16
-        public bool ObjectEnable { get; set; } // FALSE=OFF TRUE=ON
-        public bool BackgroundEnable { get; set; } // FALSE=OFF TRUE=ON
+        public bool LCDEnable; // FALSE=OFF TRUE=ON
+        public bool WindowTileMapSelect; // FALSE=9800-9BFF TRUE=9C00-9FFF
+        public bool WindowEnable; // FALSE=OFF TRUE=ON
+        public bool TileDataSelect; // FALSE=8800-97FF TRUE=8000-8FFF
+        public bool BackgroundTileMapSelect; // FALSE=9800-9BFF TRUE=9C00-9FFF
+        public bool ObjectSize; // FALSE=8x8 TRUE=8x16
+        public bool ObjectEnable; // FALSE=OFF TRUE=ON
+        public bool BackgroundEnable; // FALSE=OFF TRUE=ON
 
         // STAT LCDC Status 0xFF41
-        public bool CoincidenceInterrupt { get; set; }
-        public bool OAMInterrupt { get; set; }
-        public bool VBlankInterrupt { get; set; }
-        public bool HBlankInterrupt { get; set; }
-        public bool CoincidenceFlag { get; set; }
-        public int ModeFlag { get; set; }
+        public bool CoincidenceInterrupt;
+        public bool OAMInterrupt;
+        public bool VBlankInterrupt;
+        public bool HBlankInterrupt;
+        public bool CoincidenceFlag;
+        public int ModeFlag;
 
         // LCD Position and Scrolling
-        public int SCY { get; set; } // 0xFF42
-        public int SCX { get; set; } // 0xFF43
-        public int LY { get; set; } // 0xFF44
-        public int LYC { get; set; } // 0xFF45
-        public int WY { get; set; } // 0xFF4A
-        public int WX { get; set; } // 0xFF4B
+        public int SCY; // 0xFF42
+        public int SCX; // 0xFF43
+        public int LY; // 0xFF44
+        public int LYC; // 0xFF45
+        public int WY; // 0xFF4A
+        public int WX; // 0xFF4B
 
         // LCD Monochrome Palettes
-        public int BGP { get; set; } // 0xFF47
-        public int OBP0 { get; set; } // 0xFF48
-        public int OBP1 { get; set; } // 0xFF49
+        public int BGP; // 0xFF47
+        public int OBP0; // 0xFF48
+        public int OBP1; // 0xFF49
 
         // LCD Color Palettes (CGB only)
         // BCPS/BGPI 0xFF68
-        public bool BackgroundPaletteAI { get; set; }
-        public int BackgroundPaletteIndex { get; set; }
+        public bool BackgroundPaletteAI;
+        public int BackgroundPaletteIndex;
         // OCPS/OBPI 0xFF6A
-        public bool ObjectPaletteAI { get; set; }
-        public int ObjectPaletteIndex { get; set; }
+        public bool ObjectPaletteAI;
+        public int ObjectPaletteIndex;
 
         // VRAM Control
-        public int VRAMBank { get; set; } // 0xFF4F
+        public int VRAMBank; // 0xFF4F
 
         // Memory
         private byte[,] vram;
