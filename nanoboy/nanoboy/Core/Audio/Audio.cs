@@ -37,13 +37,13 @@ namespace nanoboy.Core.Audio
     public sealed class Audio
     {
         public event EventHandler<AudioAvailableEventArgs> AudioAvailable;
-        public QuadChannel Channel1 { get; set; }
-        public QuadChannel Channel2 { get; set; }
-        public WaveChannel Channel3 { get; set; }
-        public NoiseChannel Channel4 { get; set; }
-        public int SampleRate { get; set; }
-        public int BufferSize { get; set; }
-        public bool Enabled { get; set; }
+        public QuadChannel Channel1;
+        public QuadChannel Channel2;
+        public WaveChannel Channel3;
+        public NoiseChannel Channel4;
+        public int SampleRate;
+        public int BufferSize;
+        public bool Enabled;
         private int ticks;
         private int samples;
         private List<float> samplebuffer;
@@ -79,9 +79,7 @@ namespace nanoboy.Core.Audio
                                    (Channel4.Enabled ? Channel4.Next(SampleRate) : 0);
                     samplebuffer.Add(sample);
                     if (samples++ == BufferSize) {
-                        if (AudioAvailable != null) {
-                            AudioAvailable(this, new AudioAvailableEventArgs(samplebuffer.ToArray(), SampleRate));
-                        }
+                        AudioAvailable?.Invoke(this, new AudioAvailableEventArgs(samplebuffer.ToArray(), SampleRate));
                         samplebuffer.Clear();
                         samples = 0;
                     }
