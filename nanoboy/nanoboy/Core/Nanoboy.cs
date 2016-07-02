@@ -48,19 +48,24 @@ namespace nanoboy.Core
 
         public void Frame()
         {
-            int cyclesleft = 0;
-            for (int i = 0; i < 70224; i++) {
-                for (int j = 0; j < 4 /** (Cpu.IsDoubleSpeed ? 2 : 1)*/; j++) {
-                    if (cyclesleft == 0) {
-                        cyclesleft = Cpu.Tick();
-                    }
-                    cyclesleft--;
+            int frames_per_cycle = Cpu.IsDoubleSpeed ? 140448 : 70224;
+
+            for (int i = 0; i < frames_per_cycle; i++) {
+                int cycles = Cpu.Tick();
+
+                if (Cpu.IsDoubleSpeed)
+                    cycles >>= 1;
+
+                for (int j = 0; j < cycles; j++) {
+                    memory.Interrupt.Tick();
+                    memory.Video.Tick();
+                    memory.Audio.Tick();
+                    memory.Timer.Tick(false);
                 }
-                memory.Interrupt.Tick();
-                memory.Video.Tick();
-                memory.Audio.Tick();
-                memory.Timer.Tick(false);
+
+                i += cycles - 1;
             }
+
             memory.Video.FrameReady = false;
         }
 
