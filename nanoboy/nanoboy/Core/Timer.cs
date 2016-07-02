@@ -40,12 +40,15 @@ namespace nanoboy.Core
         {
             int divclock = doublespeed ? 128 : 256; // twice as fast in doublespeed mode
             int timaclock = 0;
+
             divcycles++;
             timacycles++;
+
             if (divcycles == divclock) {
                 divcycles = 0;
                 DIV = (DIV + 1) % 256;
             }
+
             if ((TAC & 0x4) == 0x4) { // is the timer active?
                 switch (TAC & 3) 
                 {
@@ -54,6 +57,7 @@ namespace nanoboy.Core
                     case 2: timaclock = 64; break;
                     case 3: timaclock = 256; break;
                 }
+
                 if (timacycles == timaclock) {
                     timacycles = 0;
                     TIMA++;

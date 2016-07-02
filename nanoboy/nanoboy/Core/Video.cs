@@ -28,7 +28,7 @@ namespace nanoboy.Core
     public sealed class Video
     {
 
-        public IntPtr Frame
+        public IntPtr Screen
         {
             get
             {

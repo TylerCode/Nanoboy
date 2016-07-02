@@ -25,48 +25,42 @@ namespace nanoboy.Core
 {
     public sealed class Nanoboy : IDisposable
     {
-        public Disassembler Disassembler { get; set; }
-        public IntPtr Image
-        {
-            get
-            {
-                return memory.Video.Frame;
-            }
-        }
-        public CPU Cpu { get; set; }
-        private Memory memory;
-        private static int[] samplerates = new int[] { 8192, 16384, 32768, 44100 };
+        public CPU Cpu;
+        public Memory Memory;
+        private static int[] samplerates = new int[] {
+            8192, 16384, 32768, 44100
+        };
 
         public Nanoboy(ROM rom)
         {
             Cpu = new CPU();
-            memory = new Memory(Cpu, rom);
-            Cpu.Memory = memory;
-            Disassembler = new Disassembler(memory);
+            Memory = new Memory(Cpu, rom);
+            Cpu.Memory = Memory;
             Reset();
         }
 
         public void Frame()
         {
-            int frames_per_cycle = Cpu.IsDoubleSpeed ? 140448 : 70224;
+            bool doublespeed = Cpu.IsDoubleSpeed;
+            int frames_per_cycle = doublespeed ? 140448 : 70224;
 
             for (int i = 0; i < frames_per_cycle; i++) {
                 int cycles = Cpu.Tick();
 
-                if (Cpu.IsDoubleSpeed)
+                if (doublespeed)
                     cycles >>= 1;
 
                 for (int j = 0; j < cycles; j++) {
-                    memory.Interrupt.Tick();
-                    memory.Video.Tick();
-                    memory.Audio.Tick();
-                    memory.Timer.Tick(false);
+                    Memory.Interrupt.Tick();
+                    Memory.Video.Tick();
+                    Memory.Audio.Tick();
+                    Memory.Timer.Tick(doublespeed);
                 }
 
                 i += cycles - 1;
             }
 
-            memory.Video.FrameReady = false;
+            Memory.Video.FrameReady = false;
         }
 
         public void Reset()
@@ -119,14 +113,14 @@ namespace nanoboy.Core
 
         public void SetSettings(IEmulatorSettings settings)
         {
-            memory.Audio.SampleRate = samplerates[settings.SampleRate];
-            memory.Audio.Channel1.Enabled = settings.Channel1Enable;
-            memory.Audio.Channel2.Enabled = settings.Channel2Enable;
-            memory.Audio.Channel3.Enabled = settings.Channel3Enable;
-            memory.Audio.Channel4.Enabled = settings.Channel4Enable;
-            memory.Audio.Enabled = settings.AudioEnable;
-            memory.Video.Frameskip = settings.Frameskip;
-            memory.Joypad.Settings = settings;
+            Memory.Audio.SampleRate = samplerates[settings.SampleRate];
+            Memory.Audio.Channel1.Enabled = settings.Channel1Enable;
+            Memory.Audio.Channel2.Enabled = settings.Channel2Enable;
+            Memory.Audio.Channel3.Enabled = settings.Channel3Enable;
+            Memory.Audio.Channel4.Enabled = settings.Channel4Enable;
+            Memory.Audio.Enabled = settings.AudioEnable;
+            Memory.Video.Frameskip = settings.Frameskip;
+            Memory.Joypad.Settings = settings;
         }
 
         public Subscription<CPUStatusUpdate> Debug(IObserver<CPUStatusUpdate> debugger)
@@ -136,17 +130,17 @@ namespace nanoboy.Core
 
         public void SetKey(Keys key)
         {
-            memory.Joypad.Set(key, false);
+            Memory.Joypad.Set(key, false);
         }
 
         public void UnsetKey(Keys key)
         {
-            memory.Joypad.Set(key, true);
+            Memory.Joypad.Set(key, true);
         }
 
         public void Dispose()
         {
-            memory.Dispose();
+            Memory.Dispose();
         }
     }
 }

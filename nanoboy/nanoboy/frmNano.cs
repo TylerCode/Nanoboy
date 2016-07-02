@@ -287,7 +287,6 @@ namespace nanoboy
 
                     GL.MatrixMode(MatrixMode.Modelview);
                     GL.LoadIdentity();
-                    textureid = TextureFromArray(nano.Image, textureid);
                     GL.BindTexture(TextureTarget.Texture2D, textureid);
                     GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
                     GL.Begin(PrimitiveType.Quads);
@@ -305,7 +304,6 @@ namespace nanoboy
 
                     gameView.SwapBuffers();
                 } else {
-                    Bitmap screen_original = new Bitmap(160, 140, 160 * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, nano.Image);
                     Image screen_resized = ResizeImage(screen_original, new Size(gameView.Width, gameView.Height), false);
                     e.Graphics.DrawImage(screen_resized, new Point(0, 0));
                 }

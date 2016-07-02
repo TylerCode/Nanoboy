@@ -72,7 +72,7 @@ namespace nanoboy.Core
     public sealed class CPU : IObservable<CPUStatusUpdate>
     {
         // Generic
-        public bool Running { get; set; }
+        public bool Running;
 
         // Registers
         private int a, f, b, c, d, e, h, l, sp, pc;
@@ -129,18 +129,18 @@ namespace nanoboy.Core
         }
 
         // CPU Flags
-        public bool FlagC { get; set; } // Carry
-        public bool FlagH { get; set; } // HalfCarry
-        public bool FlagN { get; set; } // Substract
-        public bool FlagZ { get; set; } // Zero
+        public bool FlagC; // Carry
+        public bool FlagH; // HalfCarry
+        public bool FlagN; // Substract
+        public bool FlagZ; // Zero
         private bool wroteflagreg;
-        
+
         // Interrupt Flags
-        public bool IME { get; set; } // Interrupt Master Enable
-        public bool WaitForInterrupt { get; set; } // HALT-Flag
-        
+        public bool IME; // Interrupt Master Enable
+        public bool WaitForInterrupt; // HALT-Flag
+
         // Memory
-        public IMemoryDevice Memory { get; set; }
+        public IMemoryDevice Memory;
 
         // Cycle Handlig
         private bool branched = false;
@@ -200,8 +200,8 @@ namespace nanoboy.Core
         private Instruction[] opcode2 = new Instruction[256];
 
         // Speed switch
-        public bool PrepareSpeedSwitch { get; set; }
-        public bool IsDoubleSpeed { get; set; }
+        public bool PrepareSpeedSwitch;
+        public bool IsDoubleSpeed;
 
         // Adapted from VisualBoyAdvance
         private uint[] daatable = new uint[] {
