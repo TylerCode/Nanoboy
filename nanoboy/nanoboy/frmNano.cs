@@ -54,6 +54,7 @@ namespace nanoboy
         private void menuOpen_Click(object sender, EventArgs e)
         {
             if (gamethread != null) {
+                updateTimer.Stop();
                 gamethread.Abort();
                 nano.Dispose();
             }
@@ -71,7 +72,6 @@ namespace nanoboy
                         stopwatch.Reset();
                         stopwatch.Start();
                         nano.Frame();
-                        gameView.Refresh();
                         stopwatch.Stop();
                         if (stopwatch.ElapsedMilliseconds < 16 && !speedup) {
                             Thread.Sleep(16 - (int)stopwatch.ElapsedMilliseconds);
@@ -80,6 +80,7 @@ namespace nanoboy
                 });
                 gamethread.Priority = ThreadPriority.Highest;
                 gamethread.Start();
+                updateTimer.Start();
             }
         }
 
@@ -273,6 +274,11 @@ namespace nanoboy
             GL.Viewport(0, 0, width, height);
         }
 
+        private void updateTimer_Tick(object sender, EventArgs e)
+        {
+            gameView.Refresh();
+        }
+
         private void gameView_Paint(object sender, PaintEventArgs e)
         {
             if (loadedgl && nano != null) {
@@ -299,8 +305,9 @@ namespace nanoboy
 
                     gameView.SwapBuffers();
                 } else {
-                    Bitmap bmp = new Bitmap(160, 140, 160 * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, nano.Image);
-                    e.Graphics.DrawImage((Image)bmp, new Rectangle(0, 0, gameView.Width, gameView.Height), new Rectangle(0, 0, 160, 140), GraphicsUnit.Pixel);
+                    Bitmap screen_original = new Bitmap(160, 140, 160 * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, nano.Image);
+                    Image screen_resized = ResizeImage(screen_original, new Size(gameView.Width, gameView.Height), false);
+                    e.Graphics.DrawImage(screen_resized, new Point(0, 0));
                 }
             }
         }
@@ -316,7 +323,6 @@ namespace nanoboy
             /* On some systems InvalidValue gets thrown. Fallback to GDI then */
             if (GL.GetError() != ErrorCode.NoError) {
                 glerror = true;
-                MessageBox.Show("GL.TexImage2D: Failed to update texture data.\nFalling back to GDI.", "Nanoboy", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return id;
         }

@@ -87,6 +87,7 @@ namespace nanoboy
             this.menuAbout = new System.Windows.Forms.MenuItem();
             this.openRom = new System.Windows.Forms.OpenFileDialog();
             this.gameView = new OpenTK.GLControl();
+            this.updateTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // nanoMenu
@@ -366,6 +367,11 @@ namespace nanoboy
             this.gameView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.gameView_PreviewKeyDown);
             this.gameView.Resize += new System.EventHandler(this.gameView_Resize);
             // 
+            // updateTimer
+            // 
+            this.updateTimer.Interval = 16;
+            this.updateTimer.Tick += new System.EventHandler(this.updateTimer_Tick);
+            // 
             // frmNano
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -422,5 +428,6 @@ namespace nanoboy
         private System.Windows.Forms.MenuItem menuAudioQ3;
         private System.Windows.Forms.MenuItem menuAudioQ4;
         private System.Windows.Forms.MenuItem menuItem5;
+        private System.Windows.Forms.Timer updateTimer;
     }
 }
