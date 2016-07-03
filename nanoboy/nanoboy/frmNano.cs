@@ -37,6 +37,7 @@ namespace nanoboy
         private Nanoboy nano;
         private NanoboySettings settings;
         private Thread gamethread;
+        private frmAudioTool audiotoolwindow;
         private bool loadedgl;
         private int textureid = -1;
         private bool speedup = false;
@@ -45,7 +46,7 @@ namespace nanoboy
         public frmNano()
         {
             InitializeComponent();
-            frmNano.CheckForIllegalCrossThreadCalls = false;
+            CheckForIllegalCrossThreadCalls = false;
             settings = new NanoboySettings();
             LoadConfiguration(); // set checkboxes according to the settings
         }
@@ -61,11 +62,15 @@ namespace nanoboy
             if (openRom.ShowDialog() == DialogResult.OK)
             {
                 ROM rom = new ROM(openRom.FileName, Path.ChangeExtension(openRom.FileName, "sav"));
-                if (nano != null) {
-                    nano.Dispose();
-                }
+
+                nano?.Dispose();
                 nano = new Nanoboy(rom);
                 nano.SetSettings(settings);
+
+                if (audiotoolwindow != null) {
+                    audiotoolwindow.Nanoboy = nano;
+                }
+
                 gamethread = new Thread(delegate() {
                     Stopwatch stopwatch = new Stopwatch();
                     while (true) {
@@ -224,6 +229,13 @@ namespace nanoboy
         {
             settings.SampleRate = 3;
             LoadConfiguration();
+        }
+
+        private void menuAudioInspector_Click(object sender, EventArgs e)
+        {
+            audiotoolwindow = new frmAudioTool();
+            audiotoolwindow.Nanoboy = nano;
+            audiotoolwindow.Show();
         }
         #endregion
 
@@ -402,9 +414,7 @@ namespace nanoboy
 
         private void UpdateEmulatorSettings()
         {
-            if (nano != null) {
-                nano.SetSettings(settings);
-            }
+            nano?.SetSettings(settings);
         }
     }
 }

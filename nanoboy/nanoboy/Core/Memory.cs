@@ -119,7 +119,7 @@ namespace nanoboy.Core
                                 (Audio.Channel1.SweepTime << 4);
                         return (byte)value;
                     case 0x11: // NR11 Channel 1 Sound length/Wave pattern duty
-                        value = Audio.Channel1.SoundLengthData |
+                        value = Audio.Channel1.SoundLengthRaw |
                                 (Audio.Channel1.WavePatternDuty << 6);
                         return (byte)value;
                     case 0x12: // NR12 Channel 1 Volume Envelope
@@ -130,7 +130,7 @@ namespace nanoboy.Core
                     case 0x14: // NR14 Channel 1 Frequency hi
                         return (byte)(Audio.Channel1.StopOnLengthExpired ? 0x40 : 0x00);
                     case 0x16: // NR21 Channel 2 Sound length/Wave pattern duty
-                        value = Audio.Channel2.SoundLengthData |
+                        value = Audio.Channel2.SoundLengthRaw |
                                 (Audio.Channel2.WavePatternDuty << 6);
                         return (byte)value;
                     case 0x17: // NR22 Channel 2 Volume Envelope
@@ -143,7 +143,7 @@ namespace nanoboy.Core
                     case 0x1A: // NR30 Channel 3 Sound on/off
                         return (byte)(Audio.Channel3.On ? 0x80 : 0x00);
                     case 0x1B: // NR31 Channel 3 Sound Length
-                        return (byte)Audio.Channel3.SoundLengthData;
+                        return (byte)Audio.Channel3.SoundLengthRaw;
                     case 0x1C: // NR32 Channel 3 Select output level
                         return (byte)(Audio.Channel3.OutputLevel << 5);
                     case 0x1E: // NR33 Channel 3 Frequency hi
@@ -302,16 +302,16 @@ namespace nanoboy.Core
                         break;
                     case 0x10: // NR10 Channel 1 Sweep register
                         Audio.Channel1.SweepShift = value & 7;
-                        Audio.Channel1.SweepDirection = (QuadChannel.SweepMode)((value >> 3) & 1);
+                        Audio.Channel1.SweepDirection = (SweepMode)((value >> 3) & 1);
                         Audio.Channel1.SweepTime = (value >> 4) & 7;
                         break;
                     case 0x11: // NR11 Channel 1 Sound length/Wave pattern duty
-                        Audio.Channel1.SoundLengthData = value & 0x3F;
+                        Audio.Channel1.SoundLengthRaw = value & 0x3F;
                         Audio.Channel1.WavePatternDuty = (value >> 6) & 3;
                         break;
                     case 0x12: // NR12 Channel 1 Volume Envelope
                         Audio.Channel1.EnvelopeSweep = value & 7;
-                        Audio.Channel1.EnvelopeDirection = (QuadChannel.EnvelopeMode)((value >> 3) & 1);
+                        Audio.Channel1.EnvelopeDirection = (EnvelopeMode)((value >> 3) & 1);
                         Audio.Channel1.Volume = (value >> 4) & 0xF;
                         break;
                     case 0x13: // NR13 Channel 1 Frequency lo
@@ -325,12 +325,12 @@ namespace nanoboy.Core
                         }
                         break;
                     case 0x16: // NR16 Channel 2 Sound length/Wave pattern duty
-                        Audio.Channel2.SoundLengthData = value & 0x3F;
+                        Audio.Channel2.SoundLengthRaw = value & 0x3F;
                         Audio.Channel2.WavePatternDuty = (value >> 6) & 3;
                         break;
                     case 0x17: // NR17 Channel 2 Volume Envelope
                         Audio.Channel2.EnvelopeSweep = value & 7;
-                        Audio.Channel2.EnvelopeDirection = (QuadChannel.EnvelopeMode)((value >> 3) & 1);
+                        Audio.Channel2.EnvelopeDirection = (EnvelopeMode)((value >> 3) & 1);
                         Audio.Channel2.Volume = (value >> 4) & 0xF;
                         break;
                     case 0x18: // NR18 Channel 2 Frequency lo
@@ -347,27 +347,27 @@ namespace nanoboy.Core
                         Audio.Channel3.On = (value & 0x80) == 0x80;
                         break;
                     case 0x1B: // NR31 Channel 3 Sound Length
-                        Audio.Channel3.SoundLengthData = value;
+                        Audio.Channel3.SoundLengthRaw = value;
                         break;
                     case 0x1c: // NR32 Channel 3 Select output level
                         Audio.Channel3.OutputLevel = (value >> 5) & 3;
                         break;
                     case 0x1D: // NR33 Channel 3 Frequency lo
-                        Audio.Channel3.Frequency = (Audio.Channel3.Frequency & 0x700) | value;
+                        Audio.Channel3.FrequencyRaw = (Audio.Channel3.FrequencyRaw & 0x700) | value;
                         break;
                     case 0x1E: // NR34 Channel 3 Frequency hi
-                        Audio.Channel3.Frequency = (Audio.Channel3.Frequency & 0xFF) | ((value & 7) << 8);
+                        Audio.Channel3.FrequencyRaw = (Audio.Channel3.FrequencyRaw & 0xFF) | ((value & 7) << 8);
                         Audio.Channel3.StopOnLengthExpired = (value & 0x40) == 0x40;
                         if ((value & 0x80) == 0x80) {
                             Audio.Channel3.Restart();
                         }
                         break;
                     case 0x20: // NR41 Channel 4 Sound Length
-                        Audio.Channel4.SoundLengthData = value;
+                        Audio.Channel4.SoundLengthRaw = value;
                         break;
                     case 0x21: // NR42 Channel 4 Volume Envelope
                         Audio.Channel4.EnvelopeSweep = value & 7;
-                        Audio.Channel4.EnvelopeDirection = (NoiseChannel.EnvelopeMode)((value >> 3) & 1);
+                        Audio.Channel4.EnvelopeDirection = (EnvelopeMode)((value >> 3) & 1);
                         Audio.Channel4.Volume = (value >> 4) & 0xF;
                         break;
                     case 0x22: // NR43 Channel 4 Polynomial Counter

@@ -30,14 +30,26 @@ namespace nanoboy.Core.Audio
         // Sampledata 
         public byte[] WaveRAM;
         
-        // Frequency
-        public int Frequency;
+        // Raw, unconverted frequency
+        public int FrequencyRaw;
+
+        // Converted frequency
+        public int Frequency {
+            get {
+                return (int)Audio.ConvertFrequency(FrequencyRaw);
+            }
+        }
         
         // Channel activity
         public bool On;
 
         // Sound length
-        public int SoundLengthData;
+        public int SoundLength {
+            get {
+                return (256 - SoundLengthRaw) * (1 / 256) * 4194304;
+            }
+        }
+        public int SoundLengthRaw;
         public bool StopOnLengthExpired;
         private int soundlengthcycles;
 
@@ -56,9 +68,8 @@ namespace nanoboy.Core.Audio
 
         public float Next(int samplerate)
         {
-            int soundlengthclock = (256 - SoundLengthData) * (1 / 256) * 4194304;
-            if (On && (!StopOnLengthExpired || soundlengthcycles <= soundlengthclock)) {
-                float index = (float)((5.093108 * Math.PI * sample * ConvertFrequency(Frequency)) / samplerate) % WaveRAM.Length;
+            if (On && (!StopOnLengthExpired || soundlengthcycles <= SoundLength)) {
+                float index = (float)((5.093108 * Math.PI * sample * Audio.ConvertFrequency(FrequencyRaw)) / samplerate) % WaveRAM.Length;
                 float value = (float)WaveRAM[(int)index] / 16f;
                 if (++sample >= samplerate) {
                     sample = 0;
@@ -79,11 +90,6 @@ namespace nanoboy.Core.Audio
         public void Restart()
         {
             soundlengthcycles = 0;
-        }
-
-        private float ConvertFrequency(int frequency)
-        {
-            return 131072 / (2048 - frequency);
         }
     }
 }

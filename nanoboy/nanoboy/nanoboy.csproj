@@ -87,6 +87,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\LevelDisplayControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\WaveDataControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Core\Audio\Audio.cs" />
     <Compile Include="Core\Audio\Backend\OpenAL\ALSoundOut.cs" />
     <Compile Include="Core\Audio\NoiseChannel.cs" />
@@ -111,6 +117,12 @@
     <Compile Include="frmAbout.Designer.cs">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmAudioTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAudioTool.Designer.cs">
+      <DependentUpon>frmAudioTool.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmControls.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,6 +142,9 @@
     <Compile Include="Core\ROM.cs" />
     <EmbeddedResource Include="frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAudioTool.resx">
+      <DependentUpon>frmAudioTool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmControls.resx">
       <DependentUpon>frmControls.cs</DependentUpon>
@@ -177,6 +192,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

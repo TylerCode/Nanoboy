@@ -24,17 +24,9 @@ namespace nanoboy.Core.Audio
 {
     public sealed class QuadChannel
     {
-        public enum SweepMode
-        {
-            Addition = 0,
-            Substraction = 1
-        }
-
-        public enum EnvelopeMode
-        {
-            Decrease = 0,
-            Increase = 1
-        }
+        public static float[] WaveDutyTable = new float[] {
+            0.125f, 0.25f, 0.5f, 0.75f
+        };
 
         // Enables or disables the channel
         public bool Enabled;
@@ -43,7 +35,10 @@ namespace nanoboy.Core.Audio
         public int SweepTime;
         public SweepMode SweepDirection;
         public int SweepShift;
-        private int[] sweepclocktable = new int[] { 0, 32768, 65536, 98304, 131072, 163840, 196608, 229376 };
+        public static int[] SweepClockTable = new int[] {
+            0, 32768, 65536, 98304,
+            131072, 163840, 196608, 229376
+        };
         private int lastfrequency;
         private int currentfrequency;
         private int sweepcycles;
@@ -55,7 +50,12 @@ namespace nanoboy.Core.Audio
             }
             set {
                 initialfrequency = value;
-                currentfrequency = value; // this is the one used to generate the sound
+                currentfrequency = value; 
+            }
+        }
+        public int CurrentFrequency {
+            get {
+                return currentfrequency;
             }
         }
         private int initialfrequency;
@@ -81,16 +81,26 @@ namespace nanoboy.Core.Audio
                 currentvolume = value;
             }
         }
+        public int CurrentVolume {
+            get {
+                return currentvolume;
+            }
+        }
         private int lastwrittenvolume;
         private int currentvolume;
         private int envelopecycles;
 
         // Sound length
-        public int SoundLengthData;
+        public int SoundLength {
+            get {
+                return (64 - SoundLengthRaw) * (1 / 256) * 4194304;
+            }
+        }
+        public int SoundLengthRaw;
         public bool StopOnLengthExpired;
         private int soundlengthcycles;
 
-        // Wave pattern duty (implement this)
+        // Wave pattern duty
         public int WavePatternDuty;
 
         // Sound generation
@@ -106,20 +116,10 @@ namespace nanoboy.Core.Audio
 
         public float Next(int samplerate)
         {
-            int soundlengthclock = (64 - SoundLengthData) * (1 / 256) * 4194304;
-            if (!StopOnLengthExpired || soundlengthcycles <= soundlengthclock) {
+            if (!StopOnLengthExpired || soundlengthcycles <= SoundLength) {
                 float amplitude = (float)currentvolume * (1f / 16f);
-                float value;
-                float duty;
-                switch (WavePatternDuty) {
-                    case 0: duty = 0.125f; break;
-                    case 1: duty = 0.25f; break;
-                    case 2: duty = 0.5f; break;
-                    case 3: duty = 0.75f; break;
-                    default:
-                        throw new Exception("Unknown wave duty");
-                }
-                value = (float)(amplitude * Generate((float)((2 * Math.PI * sample * ConvertFrequency(currentfrequency)) / samplerate), duty));
+                float value = (float)(amplitude * Generate((float)((2 * Math.PI * sample * 
+                    Audio.ConvertFrequency(currentfrequency)) / samplerate), WaveDutyTable[WavePatternDuty]));
                 if (++sample >= samplerate) {
                     sample = 0;
                 }
@@ -131,7 +131,7 @@ namespace nanoboy.Core.Audio
 
         public void Tick()
         {
-            int sweepclock = sweepclocktable[SweepTime];
+            int sweepclock = SweepClockTable[SweepTime];
             int envelopeclock = (int)(EnvelopeSweep * (1f / 64f) * 4194304f);
             // recalculate frequency
             if (sweepclock != 0) {
@@ -175,12 +175,7 @@ namespace nanoboy.Core.Audio
             envelopecycles = 0;
         }
 
-        private float ConvertFrequency(int frequency)
-        {
-            return 131072 / (2048 - frequency);
-        }
-
-        private float Generate(float x, float duty)
+        private static float Generate(float x, float duty)
         {
             float realx = x % (float)(2 * Math.PI);
             if (realx <= 2 * Math.PI * duty) {

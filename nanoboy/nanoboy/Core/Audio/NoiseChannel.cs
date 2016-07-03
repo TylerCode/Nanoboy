@@ -25,12 +25,6 @@ namespace nanoboy.Core.Audio
 {
     public sealed class NoiseChannel
     {
-        public enum EnvelopeMode
-        {
-            Decrease = 0,
-            Increase = 1
-        }
-
         // Enables or disables the channel
         public bool Enabled;
 
@@ -39,10 +33,8 @@ namespace nanoboy.Core.Audio
         public bool CounterStep; // 0 = 15 bits, 1 = 7 bits
         public int DividingRatio; // r
         public int Counter;
-        private float frequency
-        {
-            get
-            {
+        public float ResultFrequency {
+            get {
                 float r = DividingRatio == 0 ? 0.5f : (float)DividingRatio;
                 return 524288f / r / (float)Math.Pow(2, (double)(ClockFrequency + 1));
             }
@@ -50,29 +42,28 @@ namespace nanoboy.Core.Audio
 
         // Amplitude / Volumen sweep
         public EnvelopeMode EnvelopeDirection;
-        public int EnvelopeSweep
-        {
-            get
-            {
+        public int EnvelopeSweep {
+            get {
                 return envelopesweep;
             }
-            set
-            {
+            set {
                 envelopesweep = value;
                 envelopecycles = 0;
             }
         }
         private int envelopesweep;
-        public int Volume
-        {
-            get
-            {
+        public int Volume {
+            get {
                 return lastwrittenvolume;
             }
-            set
-            {
+            set {
                 lastwrittenvolume = value;
                 currentvolume = value;
+            }
+        }
+        public int CurrentVolume {
+            get {
+                return currentvolume;
             }
         }
         private int lastwrittenvolume;
@@ -80,7 +71,12 @@ namespace nanoboy.Core.Audio
         private int envelopecycles;
 
         // Sound length
-        public int SoundLengthData;
+        public int SoundLength {
+            get {
+                return (256 - SoundLengthRaw) * (1 / 256) * 4194304;
+            }
+        }
+        public int SoundLengthRaw;
         public bool StopOnLengthExpired;
         private int soundlengthcycles;
 
@@ -98,9 +94,8 @@ namespace nanoboy.Core.Audio
         public float Next(int samplerate)
         {
             int value = 0;
-            int soundlengthclock = (64 - SoundLengthData) * (1 / 256) * 4194304;
             float amplitude = (float)currentvolume * (1f / 16f);
-            if (!StopOnLengthExpired || soundlengthcycles <= soundlengthclock) {
+            if (!StopOnLengthExpired || soundlengthcycles <= SoundLength) {
                 if (buffer.Count != 0 && buffer.Count > sample) {
                     float index = sample;
                     value = buffer[sample];
@@ -118,7 +113,7 @@ namespace nanoboy.Core.Audio
             int envelopeclock = (int)(EnvelopeSweep * (1f / 64f) * 4194304f);
             steps++;
             // update counter
-            if ((int)(4194304f / frequency) >= steps) {
+            if ((int)(4194304f / ResultFrequency) >= steps) {
                 int msb = (Counter & 1) ^ ((Counter >> 1) & 1);
                 Counter = (Counter >> 1) | (msb << (CounterStep ? 6 : 14));
                 buffer.Add(Counter);

@@ -55,15 +55,14 @@ namespace nanoboy.Core
         public void OnNext(CPUStatusUpdate value)
         {
             foreach (Breakpoint breakpoint in Breakpoints) {
-                bool typematch = (breakpoint.Type == nanoboy.Core.Breakpoint.BreakpointType.Execution && value.Reason == CPUStatusUpdate.UpdateReason.Execution) |
-                                 (breakpoint.Type == nanoboy.Core.Breakpoint.BreakpointType.Memory && (value.Reason == CPUStatusUpdate.UpdateReason.MemoryRead || value.Reason == CPUStatusUpdate.UpdateReason.MemoryWrite)) |
-                                 (breakpoint.Type == nanoboy.Core.Breakpoint.BreakpointType.MemoryRead && value.Reason == CPUStatusUpdate.UpdateReason.MemoryRead) |
-                                 (breakpoint.Type == nanoboy.Core.Breakpoint.BreakpointType.MemoryWrite && value.Reason == CPUStatusUpdate.UpdateReason.MemoryWrite);
+                bool typematch = (breakpoint.Type == Core.Breakpoint.BreakpointType.Execution && value.Reason == CPUStatusUpdate.UpdateReason.Execution) |
+                                 (breakpoint.Type == Core.Breakpoint.BreakpointType.Memory && (value.Reason == CPUStatusUpdate.UpdateReason.MemoryRead ||
+                                                                                               value.Reason == CPUStatusUpdate.UpdateReason.MemoryWrite)) |
+                                 (breakpoint.Type == Core.Breakpoint.BreakpointType.MemoryRead && value.Reason == CPUStatusUpdate.UpdateReason.MemoryRead) |
+                                 (breakpoint.Type == Core.Breakpoint.BreakpointType.MemoryWrite && value.Reason == CPUStatusUpdate.UpdateReason.MemoryWrite);
                 if (breakpoint.Offset == value.Offset && typematch) {
                     value.CPU.Running = false;
-                    if (Breakpoint != null) {
-                        Breakpoint(this, new BreakpointEventArgs(value));
-                    }
+                    Breakpoint?.Invoke(this, new BreakpointEventArgs(value));
                 }
             }
         }

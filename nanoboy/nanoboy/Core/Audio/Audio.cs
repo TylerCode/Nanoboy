@@ -22,6 +22,18 @@ using System.Collections.Generic;
 
 namespace nanoboy.Core.Audio
 {
+    public enum SweepMode
+    {
+        Addition = 0,
+        Substraction = 1
+    }
+
+    public enum EnvelopeMode
+    {
+        Decrease = 0,
+        Increase = 1
+    }
+
     public sealed class AudioAvailableEventArgs : EventArgs
     {
         public float[] Buffer { get; set; }
@@ -86,6 +98,11 @@ namespace nanoboy.Core.Audio
                 }
                 ticks = 0;
             }
+        }
+
+        public static float ConvertFrequency(int frequency)
+        {
+            return 131072 / (2048 - frequency);
         }
     }
 }
