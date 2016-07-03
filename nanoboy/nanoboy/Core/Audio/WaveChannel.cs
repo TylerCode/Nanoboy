@@ -22,27 +22,27 @@ using nanoboy.Core.Audio.Backend;
 
 namespace nanoboy.Core.Audio
 {
-    public sealed class WaveChannel : ISoundChannel
+    public sealed class WaveChannel
     {
         // Enables or disables the channel
-        public bool Enabled { get; set; }
+        public bool Enabled;
 
         // Sampledata 
-        public byte[] WaveRAM { get; set; }
+        public byte[] WaveRAM;
         
         // Frequency
-        public int Frequency { get; set; }
+        public int Frequency;
         
         // Channel activity
-        public bool On { get; set; }
+        public bool On;
 
         // Sound length
-        public int SoundLengthData { get; set; }
-        public bool StopOnLengthExpired { get; set; }
+        public int SoundLengthData;
+        public bool StopOnLengthExpired;
         private int soundlengthcycles;
 
         // Channel output level
-        public int OutputLevel { get; set; }
+        public int OutputLevel;
         private float[] outputlevels = new float[] {0f, 1f, 0.5f, 0.25f};
 
         // Sound generation

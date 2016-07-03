@@ -116,8 +116,7 @@ namespace nanoboy.Core.Audio.Backend.OpenAL
                 int processed;
                 AL.GetSource(source, ALGetSourcei.BuffersProcessed, out processed);
 
-                // add more buffers while we need them
-                while (processed-- > 0) {
+                if (processed != 0) {
                     int bufferid = 0;
                     AL.SourceUnqueueBuffers(source, 1, ref bufferid);
                     Stream(bufferid);

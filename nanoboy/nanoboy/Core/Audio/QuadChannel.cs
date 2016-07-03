@@ -22,7 +22,7 @@ using nanoboy.Core.Audio.Backend;
 
 namespace nanoboy.Core.Audio
 {
-    public sealed class QuadChannel : ISoundChannel
+    public sealed class QuadChannel
     {
         public enum SweepMode
         {
@@ -37,12 +37,12 @@ namespace nanoboy.Core.Audio
         }
 
         // Enables or disables the channel
-        public bool Enabled { get; set; }
+        public bool Enabled;
 
         // Sweep
-        public int SweepTime { get; set; }
-        public SweepMode SweepDirection { get; set; }
-        public int SweepShift { get; set; }
+        public int SweepTime;
+        public SweepMode SweepDirection;
+        public int SweepShift;
         private int[] sweepclocktable = new int[] { 0, 32768, 65536, 98304, 131072, 163840, 196608, 229376 };
         private int lastfrequency;
         private int currentfrequency;
@@ -61,7 +61,7 @@ namespace nanoboy.Core.Audio
         private int initialfrequency;
 
         // Amplitude / Volumen sweep
-        public EnvelopeMode EnvelopeDirection { get; set; }
+        public EnvelopeMode EnvelopeDirection;
         public int EnvelopeSweep { 
             get {
                 return envelopesweep;
@@ -86,12 +86,12 @@ namespace nanoboy.Core.Audio
         private int envelopecycles;
 
         // Sound length
-        public int SoundLengthData { get; set; }
-        public bool StopOnLengthExpired { get; set; }
+        public int SoundLengthData;
+        public bool StopOnLengthExpired;
         private int soundlengthcycles;
 
         // Wave pattern duty (implement this)
-        public int WavePatternDuty { get; set; }
+        public int WavePatternDuty;
 
         // Sound generation
         private int sample;

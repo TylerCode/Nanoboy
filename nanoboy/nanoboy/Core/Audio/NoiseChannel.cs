@@ -23,7 +23,7 @@ using nanoboy.Core.Audio.Backend;
 
 namespace nanoboy.Core.Audio
 {
-    public sealed class NoiseChannel : ISoundChannel
+    public sealed class NoiseChannel
     {
         public enum EnvelopeMode
         {
@@ -32,13 +32,13 @@ namespace nanoboy.Core.Audio
         }
 
         // Enables or disables the channel
-        public bool Enabled { get; set; }
+        public bool Enabled;
 
         // Noise generation
-        public int ClockFrequency { get; set; } // s
-        public bool CounterStep { get; set; } // 0 = 15 bits, 1 = 7 bits
-        public int DividingRatio { get; set; } // r
-        public int Counter { get; set; }
+        public int ClockFrequency; // s
+        public bool CounterStep; // 0 = 15 bits, 1 = 7 bits
+        public int DividingRatio; // r
+        public int Counter;
         private float frequency
         {
             get
@@ -49,7 +49,7 @@ namespace nanoboy.Core.Audio
         }
 
         // Amplitude / Volumen sweep
-        public EnvelopeMode EnvelopeDirection { get; set; }
+        public EnvelopeMode EnvelopeDirection;
         public int EnvelopeSweep
         {
             get
@@ -80,8 +80,8 @@ namespace nanoboy.Core.Audio
         private int envelopecycles;
 
         // Sound length
-        public int SoundLengthData { get; set; }
-        public bool StopOnLengthExpired { get; set; }
+        public int SoundLengthData;
+        public bool StopOnLengthExpired;
         private int soundlengthcycles;
 
         // Sound generation

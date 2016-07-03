@@ -42,9 +42,9 @@ namespace nanoboy.Core
         public void Frame()
         {
             bool doublespeed = Cpu.IsDoubleSpeed;
-            int frames_per_cycle = doublespeed ? 140448 : 70224;
+            int cycles_per_frame = doublespeed ? 140448 : 70224;
 
-            for (int i = 0; i < frames_per_cycle; i++) {
+            for (int i = 0; i < cycles_per_frame; i++) {
                 int cycles = Cpu.Tick();
 
                 if (doublespeed)
