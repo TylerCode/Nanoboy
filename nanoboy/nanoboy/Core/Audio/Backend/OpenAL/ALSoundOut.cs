@@ -27,7 +27,7 @@ using System.IO;
 
 namespace nanoboy.Core.Audio.Backend.OpenAL
 {
-    public sealed class ALSoundOut : IDisposable
+    public sealed class ALSoundOut : SoundOut
     {
         public float Amplitude { get; set; }
         private int source;
@@ -37,10 +37,9 @@ namespace nanoboy.Core.Audio.Backend.OpenAL
         private Thread audiothread;
         private int currentrate;
 
-        public ALSoundOut(Audio audio)
+        public ALSoundOut(Audio audio) : base(audio)
         {
             Amplitude = 0.25f;
-            audio.AudioAvailable += audio_AudioAvailable;
             audioqueue = new Queue<short[]>();
             currentrate = audio.SampleRate;
             audiothread = new Thread(StreamingThread);
@@ -53,13 +52,13 @@ namespace nanoboy.Core.Audio.Backend.OpenAL
             Dispose();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             audiothread.Abort();
             audiocontext.Dispose();
         }
 
-        private void audio_AudioAvailable(object sender, AudioAvailableEventArgs e)
+        protected override void Audio_AudioAvailable(object sender, AudioAvailableEventArgs e)
         {
             short[] buffer = new short[e.Buffer.Length];
 

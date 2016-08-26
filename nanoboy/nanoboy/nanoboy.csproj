@@ -68,6 +68,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenTK.dll</HintPath>
@@ -94,7 +98,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\Audio\Audio.cs" />
+    <Compile Include="Core\Audio\Backend\NAudio\NAudioSoundOut.cs" />
     <Compile Include="Core\Audio\Backend\OpenAL\ALSoundOut.cs" />
+    <Compile Include="Core\Audio\Backend\SoundOut.cs" />
     <Compile Include="Core\Audio\NoiseChannel.cs" />
     <Compile Include="Core\Audio\WaveChannel.cs" />
     <Compile Include="Core\Audio\QuadChannel.cs" />
@@ -162,6 +168,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

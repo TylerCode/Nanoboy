@@ -17,6 +17,9 @@
  * along with nanoboy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using nanoboy.Core.Audio.Backend;
+using nanoboy.Core.Audio.Backend.NAudio;
+using nanoboy.Core.Audio.Backend.OpenAL;
 using System;
 using System.Collections.Generic;
 
@@ -34,6 +37,12 @@ namespace nanoboy.Core.Audio
         Increase = 1
     }
 
+    public enum SoundOutMode
+    {
+        OpenAL = 0,
+        NAudio = 1
+    }
+
     public sealed class AudioAvailableEventArgs : EventArgs
     {
         public float[] Buffer { get; set; }
@@ -46,7 +55,7 @@ namespace nanoboy.Core.Audio
         }
     }
 
-    public sealed class Audio
+    public sealed class Audio : IDisposable
     {
         public event EventHandler<AudioAvailableEventArgs> AudioAvailable;
         public QuadChannel Channel1;
@@ -60,7 +69,9 @@ namespace nanoboy.Core.Audio
         private int samples;
         private List<float> samplebuffer;
 
-        public Audio()
+        public SoundOut soundout;
+
+        public Audio(SoundOutMode mode)
         {
             Channel1 = new QuadChannel();
             Channel2 = new QuadChannel();
@@ -72,6 +83,19 @@ namespace nanoboy.Core.Audio
             ticks = 0;
             samples = 0;
             samplebuffer = new List<float>();
+
+            switch (mode)
+            {
+                default:
+                case SoundOutMode.OpenAL:
+                    soundout = new ALSoundOut(this);
+                    break;
+
+                case SoundOutMode.NAudio:
+                    soundout = new NAudioSoundOut(this);
+                    break;
+
+            }
         }
 
         public void Tick()
@@ -103,6 +127,11 @@ namespace nanoboy.Core.Audio
         public static float ConvertFrequency(int frequency)
         {
             return 131072 / (2048 - frequency);
+        }
+
+        public void Dispose()
+        {
+            ((IDisposable)soundout).Dispose();
         }
     }
 }
