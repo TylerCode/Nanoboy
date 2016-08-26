@@ -19,7 +19,7 @@
 
 using System;
 using nanoboy.Core.Audio;
-using nanoboy.Core.Audio.Backend.OpenAL;
+using nanoboy.Core.Audio.Backend;
 
 namespace nanoboy.Core
 {
@@ -37,7 +37,6 @@ namespace nanoboy.Core
         private byte[,] wram;
         private int wrambank;
         private byte[] hram;
-        private ALSoundOut soundout;
         private ISerialDevice serial;
 
         public Memory(CPU cpu, ROM rom)
@@ -49,8 +48,7 @@ namespace nanoboy.Core
             wram = new byte[8, 0x1000];
             wrambank = 1;
             hram = new byte[0x7F];
-            Audio = new Audio.Audio();
-            soundout = new ALSoundOut(Audio);
+            Audio = new Audio.Audio(SoundOutMode.OpenAL);
             serial = new SerialConsole();
             Interrupt = new Interrupt(cpu);
             Video = new Video(Interrupt, hdma, rom);
@@ -512,7 +510,7 @@ namespace nanoboy.Core
 
         public void Dispose()
         {
-            soundout.Dispose();
+            Audio.Dispose();
         }
     }
 }
