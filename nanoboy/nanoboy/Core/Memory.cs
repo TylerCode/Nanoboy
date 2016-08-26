@@ -48,7 +48,7 @@ namespace nanoboy.Core
             wram = new byte[8, 0x1000];
             wrambank = 1;
             hram = new byte[0x7F];
-            Audio = new Audio.Audio(SoundOutMode.OpenAL);
+            Audio = new Audio.Audio(SoundOutMode.NAudio);
             serial = new SerialConsole();
             Interrupt = new Interrupt(cpu);
             Video = new Video(Interrupt, hdma, rom);
