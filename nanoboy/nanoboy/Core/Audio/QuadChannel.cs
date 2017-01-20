@@ -140,9 +140,9 @@ namespace nanoboy.Core.Audio
                     sweepcycles = 0;
                     lastfrequency = currentfrequency;
                     if (SweepDirection == SweepMode.Addition) {
-                        currentfrequency = lastfrequency + lastfrequency / (2 << SweepShift);
+                        currentfrequency = lastfrequency + lastfrequency / (1 << SweepShift);
                     } else {
-                        currentfrequency = lastfrequency - lastfrequency / (2 << SweepShift);
+                        currentfrequency = lastfrequency - lastfrequency / (1 << SweepShift);
                     }
                 }
             }
