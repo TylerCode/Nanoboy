@@ -103,6 +103,8 @@ namespace nanoboy.Core
         private bool coincidenceinterrupttriggered;
         private int framecounter;
         private bool updaterequired;
+        private double deltaTime;
+        private DateTime lastFrameTimeUTC;
 
         private struct SpriteEntry
         {
@@ -137,6 +139,14 @@ namespace nanoboy.Core
         /* Partially adapted from http://imrannazar.com/GameBoy-Emulation-in-JavaScript:-GPU-Timings */
         public void Tick()
         {
+            // Calculate Framerate (deltaTime)
+            if (lastFrameTimeUTC == null)
+            {
+                lastFrameTimeUTC = DateTime.UtcNow; //need to move this
+            }
+            deltaTime = (lastFrameTimeUTC - DateTime.UtcNow).TotalSeconds;
+            lastFrameTimeUTC = DateTime.UtcNow;
+
             CoincidenceFlag = LY == LYC;
             if (CoincidenceInterrupt && CoincidenceFlag && !coincidenceinterrupttriggered) {
                 interrupt.IF |= 2;

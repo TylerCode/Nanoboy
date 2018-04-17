@@ -83,12 +83,12 @@ namespace nanoboy
             this.menuItem20 = new System.Windows.Forms.MenuItem();
             this.menuControls = new System.Windows.Forms.MenuItem();
             this.menuItem21 = new System.Windows.Forms.MenuItem();
+            this.menuAudioInspector = new System.Windows.Forms.MenuItem();
             this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuAbout = new System.Windows.Forms.MenuItem();
             this.openRom = new System.Windows.Forms.OpenFileDialog();
             this.gameView = new OpenTK.GLControl();
             this.updateTimer = new System.Windows.Forms.Timer(this.components);
-            this.menuAudioInspector = new System.Windows.Forms.MenuItem();
             this.SuspendLayout();
             // 
             // nanoMenu
@@ -335,6 +335,12 @@ namespace nanoboy
             this.menuAudioInspector});
             this.menuItem21.Text = "Tools";
             // 
+            // menuAudioInspector
+            // 
+            this.menuAudioInspector.Index = 0;
+            this.menuAudioInspector.Text = "Audio Inspector";
+            this.menuAudioInspector.Click += new System.EventHandler(this.menuAudioInspector_Click);
+            // 
             // menuItem4
             // 
             this.menuItem4.Index = 3;
@@ -374,12 +380,6 @@ namespace nanoboy
             // 
             this.updateTimer.Interval = 16;
             this.updateTimer.Tick += new System.EventHandler(this.updateTimer_Tick);
-            // 
-            // menuAudioInspector
-            // 
-            this.menuAudioInspector.Index = 0;
-            this.menuAudioInspector.Text = "Audio Inspector";
-            this.menuAudioInspector.Click += new System.EventHandler(this.menuAudioInspector_Click);
             // 
             // frmNano
             // 
